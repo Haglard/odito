@@ -2,20 +2,22 @@
 # ODITO — Audit Management System
 # FastAPI + SQLite + cookie auth
 # ============================================================
-import os, hashlib, secrets, asyncio, json
+import os, hashlib, secrets, asyncio, json as jsonlib, io
 from datetime import datetime, date
-from typing import Optional, List
+from typing import Optional, List, Any
 from contextlib import asynccontextmanager
 
 import aiosqlite
-from fastapi import FastAPI, HTTPException, Cookie, Depends, Request, Query
+from fastapi import FastAPI, HTTPException, Cookie, Depends, Request, Query, UploadFile, File, Form
 from fastapi.responses import JSONResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 # ── Config ──────────────────────────────────────────────────
-DB_PATH     = os.getenv("ODITO_DB", "odito.db")
-ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "")
+DB_PATH        = os.getenv("ODITO_DB", "odito.db")
+ADMIN_EMAIL    = os.getenv("ADMIN_EMAIL", "")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+OPENAI_MODEL   = os.getenv("OPENAI_MODEL", "gpt-4o")
 
 # ── Helpers ─────────────────────────────────────────────────
 def hash_pw(pw: str) -> str:
@@ -793,6 +795,170 @@ async def list_users(user=Depends(require_auth)):
         ) as cur:
             rows = await cur.fetchall()
     return JSONResponse([dict(r) for r in rows])
+
+# ════════════════════════════════════════════════════════════
+# PDF → AI IMPORT
+# ════════════════════════════════════════════════════════════
+PDF_PROMPT = """Sei un esperto di report di audit regolatorio. Analizza il testo del report che ti fornisco ed estrai le informazioni strutturate.
+
+Restituisci SOLO un oggetto JSON con questa struttura (usa null per i campi non trovati):
+
+{
+  "audit": {
+    "report_ref": "codice report es. 2025-NPG-003",
+    "title": "titolo completo del report",
+    "audited_entity": "nome entità auditata",
+    "audit_type": "tipo audit es. Planned Standard Audit",
+    "audit_class": "classe audit es. Legal Entity Audit",
+    "overall_result": "uno tra: Good, Satisfactory, Unsatisfactory, Poor",
+    "previous_result": "giudizio audit precedente",
+    "previous_result_date": "YYYY-MM-DD o null",
+    "issue_date": "YYYY-MM-DD o null",
+    "sample_period_from": "YYYY-MM-DD o null",
+    "sample_period_to": "YYYY-MM-DD o null",
+    "fieldwork_period_from": "YYYY-MM-DD o null",
+    "fieldwork_period_to": "YYYY-MM-DD o null",
+    "exit_meeting_date": "YYYY-MM-DD o null",
+    "exit_meeting_participants": "stringa con nomi e ruoli",
+    "chief_audit_executive": "nome CAE",
+    "audit_team_manager": "nome team manager",
+    "audit_team": "nomi separati da virgola",
+    "background": "testo completo del background/scope/executive summary"
+  },
+  "findings": [
+    {
+      "finding_ref": "es. NC-001 o Finding 1",
+      "title": "titolo breve della non conformità",
+      "priority": 1,
+      "description": "descrizione completa della non conformità",
+      "article_ref": "riferimento normativo es. DORA Art. 9.4",
+      "root_cause": "analisi della causa radice",
+      "recommendation": "azione raccomandata"
+    }
+  ]
+}
+
+Per la priorità usa: 1=High/Critical, 2=Relevant/Important, 3=Medium/Moderate, 4=Low/Minor.
+Per le date converte qualsiasi formato in YYYY-MM-DD.
+Per i findings estrai TUTTE le non conformità, finding, osservazioni presenti nel report.
+"""
+
+@app.get("/api/audits/check-openai")
+async def check_openai(user=Depends(require_auditor)):
+    return JSONResponse({"configured": bool(OPENAI_API_KEY), "model": OPENAI_MODEL})
+
+@app.post("/api/audits/extract-pdf")
+async def extract_pdf(
+    file: UploadFile = File(...),
+    openai_key: Optional[str] = Form(default=None),
+    user=Depends(require_auditor)
+):
+    api_key = openai_key or OPENAI_API_KEY
+    if not api_key:
+        raise HTTPException(400, "OpenAI API key non configurata. Impostare OPENAI_API_KEY o fornirla nel form.")
+
+    # Leggi PDF ed estrai testo
+    content = await file.read()
+    try:
+        import pdfplumber
+        text = ""
+        with pdfplumber.open(io.BytesIO(content)) as pdf:
+            for page in pdf.pages:
+                t = page.extract_text()
+                if t:
+                    text += t + "\n\n"
+    except Exception as e:
+        raise HTTPException(400, f"Errore lettura PDF: {e}")
+
+    if not text.strip():
+        raise HTTPException(400, "Impossibile estrarre testo dal PDF. Il file potrebbe essere scansionato o protetto.")
+
+    # Tronca se troppo lungo (GPT-4o: 128k token ≈ ~500k chars, ma limitiamo a 80k per sicurezza)
+    MAX_CHARS = 80000
+    truncated = len(text) > MAX_CHARS
+    if truncated:
+        text = text[:MAX_CHARS] + "\n\n[... documento troncato per dimensioni ...]"
+
+    # Chiama OpenAI
+    try:
+        from openai import AsyncOpenAI
+        client = AsyncOpenAI(api_key=api_key)
+        response = await client.chat.completions.create(
+            model=OPENAI_MODEL,
+            messages=[
+                {"role": "system", "content": PDF_PROMPT},
+                {"role": "user",   "content": f"Testo del report di audit:\n\n{text}"}
+            ],
+            response_format={"type": "json_object"},
+            temperature=0.1,
+            max_tokens=4096
+        )
+    except Exception as e:
+        raise HTTPException(500, f"Errore OpenAI: {e}")
+
+    try:
+        result = jsonlib.loads(response.choices[0].message.content)
+    except Exception:
+        raise HTTPException(500, "La risposta AI non è JSON valido")
+
+    result["_truncated"] = truncated
+    result["_pages"] = len(content) // 2048  # stima pagine
+    return JSONResponse(result)
+
+
+class ImportFinding(BaseModel):
+    finding_ref: Optional[str] = None
+    title: str
+    priority: int = 3
+    description: Optional[str] = None
+    article_ref: Optional[str] = None
+    root_cause: Optional[str] = None
+    recommendation: Optional[str] = None
+
+class ImportFullReq(BaseModel):
+    audit: AuditReq
+    findings: List[ImportFinding] = []
+
+@app.post("/api/audits/import-full")
+async def import_full(req: ImportFullReq, user=Depends(require_auditor)):
+    async with aiosqlite.connect(DB_PATH) as db:
+        db.row_factory = aiosqlite.Row
+        async with db.execute(
+            "SELECT id FROM audit_reports WHERE report_ref=?", (req.audit.report_ref,)
+        ) as cur:
+            if await cur.fetchone():
+                raise HTTPException(400, "Codice report già esistente")
+        # Crea audit
+        cur = await db.execute("""
+            INSERT INTO audit_reports
+                (report_ref,title,audited_entity,audit_type,audit_class,
+                 overall_result,previous_result,previous_result_date,issue_date,
+                 sample_period_from,sample_period_to,fieldwork_period_from,
+                 fieldwork_period_to,exit_meeting_date,exit_meeting_participants,
+                 chief_audit_executive,audit_team_manager,audit_team,background,
+                 created_by)
+            VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        """, (req.audit.report_ref, req.audit.title, req.audit.audited_entity,
+              req.audit.audit_type, req.audit.audit_class, req.audit.overall_result,
+              req.audit.previous_result, req.audit.previous_result_date, req.audit.issue_date,
+              req.audit.sample_period_from, req.audit.sample_period_to,
+              req.audit.fieldwork_period_from, req.audit.fieldwork_period_to,
+              req.audit.exit_meeting_date, req.audit.exit_meeting_participants,
+              req.audit.chief_audit_executive, req.audit.audit_team_manager,
+              req.audit.audit_team, req.audit.background, user["id"]))
+        audit_id = cur.lastrowid
+        # Crea findings
+        for f in req.findings:
+            await db.execute("""
+                INSERT INTO findings
+                    (audit_id,finding_ref,title,priority,description,
+                     article_ref,root_cause,recommendation)
+                VALUES(?,?,?,?,?,?,?,?)
+            """, (audit_id, f.finding_ref, f.title, f.priority,
+                  f.description, f.article_ref, f.root_cause, f.recommendation))
+        await db.commit()
+    return JSONResponse({"id": audit_id, "findings_created": len(req.findings)})
+
 
 # ── Run ──────────────────────────────────────────────────────
 if __name__ == "__main__":

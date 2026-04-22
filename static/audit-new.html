@@ -5,8 +5,8 @@
 <script>(function(){var t=localStorage.getItem('odito-theme')||'light';document.documentElement.dataset.theme=t;})()</script>
 <title>ODITO — Nuovo Audit</title>
 <style>
-:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3349;--text:#e8eaf6;--text2:#8892b0;--accent:#5c7cfa;--accent2:#4263eb;--danger:#f03e3e;--success:#37b24d}
-[data-theme=light]{--bg:#f0f2f8;--surface:#fff;--surface2:#e8eaf6;--border:#c5cae9;--text:#1a1d27;--text2:#555f7e;--accent:#4263eb;--accent2:#3451d1}
+:root{--bg:#f0f2f8;--surface:#fff;--surface2:#e8eaf6;--border:#c5cae9;--text:#1a1d27;--text2:#555f7e;--accent:#4263eb;--accent2:#3451d1;--danger:#f03e3e;--success:#37b24d;--warn:#f59f00}
+[data-theme=dark]{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3349;--text:#e8eaf6;--text2:#8892b0;--accent:#5c7cfa;--accent2:#4263eb}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif}
 nav{background:var(--surface);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;align-items:center;gap:1rem}
@@ -18,7 +18,7 @@ main{max-width:900px;margin:0 auto;padding:2rem 1.5rem}
 h1{font-size:1.5rem;margin-bottom:.25rem}
 .subtitle{color:var(--text2);margin-bottom:2rem;font-size:.9rem}
 .form-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.75rem;margin-bottom:1.5rem}
-.section-title{font-size:1rem;font-weight:600;margin-bottom:1.25rem;color:var(--accent);border-bottom:1px solid var(--border);padding-bottom:.6rem}
+.section-title{font-size:1rem;font-weight:600;margin-bottom:1.25rem;color:var(--accent);border-bottom:1px solid var(--border);padding-bottom:.6rem;display:flex;align-items:center;gap:.5rem}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 @media(max-width:600px){.grid2{grid-template-columns:1fr}}
 .field{margin-bottom:1rem}
@@ -27,11 +27,46 @@ input,select,textarea{width:100%;padding:.65rem .9rem;background:var(--surface2)
 input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 textarea{resize:vertical;min-height:80px}
 select option{background:var(--surface)}
-.actions{display:flex;gap:1rem;margin-top:1.5rem}
-.btn{padding:.75rem 1.75rem;border:none;border-radius:8px;font-size:.95rem;font-weight:600;cursor:pointer;transition:background .2s}
+.btn{padding:.65rem 1.5rem;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;transition:background .2s}
 .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent2)}
 .btn-ghost{background:var(--surface2);color:var(--text2)}.btn-ghost:hover{background:var(--border)}
+.actions{display:flex;gap:1rem;margin-top:1.5rem}
 .err{background:#f03e3e22;border:1px solid var(--danger);color:var(--danger);padding:.7rem 1rem;border-radius:8px;margin-top:1rem;font-size:.85rem;display:none}
+
+/* ── PDF IMPORT ── */
+.pdf-drop{border:2px dashed var(--border);border-radius:10px;padding:2rem;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:1rem}
+.pdf-drop:hover,.pdf-drop.dragover{border-color:var(--accent);background:var(--surface2)}
+.pdf-drop-icon{font-size:2.5rem;margin-bottom:.5rem}
+.pdf-drop-text{font-size:.9rem;color:var(--text2)}
+.pdf-drop-text span{color:var(--accent);font-weight:600}
+.pdf-drop-hint{font-size:.78rem;color:var(--text2);margin-top:.3rem}
+.pdf-status{border-radius:8px;padding:.85rem 1rem;font-size:.88rem;margin-top:.75rem;display:none;align-items:center;gap:.75rem}
+.pdf-status.loading{background:#5c7cfa18;border:1px solid var(--accent);color:var(--accent);display:flex}
+.pdf-status.success{background:#37b24d18;border:1px solid var(--success);color:var(--success);display:flex}
+.pdf-status.error{background:#f03e3e18;border:1px solid var(--danger);color:var(--danger);display:flex}
+.spin{display:inline-block;animation:spin 1s linear infinite;font-size:1.1rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.key-row{display:flex;gap:.5rem;align-items:center;margin-top:.75rem}
+.key-row input{font-size:.82rem}
+.key-toggle{font-size:.78rem;color:var(--accent);cursor:pointer;white-space:nowrap;padding:.3rem .6rem;border:1px solid var(--border);border-radius:6px;background:none;flex-shrink:0}
+.key-toggle:hover{background:var(--surface2)}
+
+/* ── FINDINGS PREVIEW ── */
+.findings-preview{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;display:none}
+.fp-title{font-size:.95rem;font-weight:600;color:var(--accent);margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between}
+.fp-item{display:flex;align-items:flex-start;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--border)}
+.fp-item:last-child{border-bottom:none}
+.fp-ref{font-size:.72rem;font-family:monospace;color:var(--text2);background:var(--surface2);padding:.2rem .45rem;border-radius:4px;white-space:nowrap;flex-shrink:0}
+.fp-body{flex:1}
+.fp-name{font-size:.88rem;font-weight:600}
+.fp-sub{font-size:.75rem;color:var(--text2);margin-top:.15rem}
+.badge{display:inline-block;padding:.2rem .55rem;border-radius:12px;font-size:.7rem;font-weight:700}
+.badge.p1{background:#f03e3e22;color:#f03e3e}
+.badge.p2{background:#f59f0022;color:#f59f00}
+.badge.p3{background:#1c7ed622;color:#1c7ed6}
+.badge.p4{background:#37b24d22;color:#37b24d}
+.fp-remove{background:none;border:none;color:var(--text2);cursor:pointer;font-size:1rem;padding:.2rem .4rem;border-radius:4px;flex-shrink:0}
+.fp-remove:hover{background:var(--surface2);color:var(--danger)}
 </style>
 </head>
 <body>
@@ -42,8 +77,35 @@ select option{background:var(--surface)}
 </nav>
 <main>
   <h1>Nuovo Audit Report</h1>
-  <p class="subtitle">Inserisci i dati del report di audit</p>
+  <p class="subtitle">Importa da PDF oppure compila manualmente</p>
 
+  <!-- ── PDF IMPORT CARD ── -->
+  <div class="form-card">
+    <div class="section-title">🤖 Importa da PDF con AI</div>
+    <div class="pdf-drop" id="pdfDrop"
+         onclick="document.getElementById('pdfInput').click()"
+         ondragover="event.preventDefault();this.classList.add('dragover')"
+         ondragleave="this.classList.remove('dragover')"
+         ondrop="handleDrop(event)">
+      <div class="pdf-drop-icon">📄</div>
+      <div class="pdf-drop-text">Trascina il PDF qui oppure <span>clicca per selezionare</span></div>
+      <div class="pdf-drop-hint">ChatGPT estrarrà automaticamente tutti i campi e le non conformità</div>
+    </div>
+    <input type="file" id="pdfInput" accept=".pdf" style="display:none" onchange="handlePdfSelect(this.files[0])">
+
+    <div class="pdf-status" id="pdfStatus"></div>
+
+    <!-- API key opzionale -->
+    <div id="keyRow" class="key-row" style="display:none">
+      <input type="password" id="openaiKey" placeholder="OpenAI API key (sk-...)">
+      <button class="key-toggle" onclick="extractPdf()">🚀 Estrai</button>
+    </div>
+    <div id="keyHint" style="font-size:.75rem;color:var(--text2);margin-top:.5rem;display:none">
+      La chiave non viene salvata sul server.
+    </div>
+  </div>
+
+  <!-- ── FORM MANUALE ── -->
   <div class="form-card">
     <div class="section-title">Intestazione Report</div>
     <div class="grid2">
@@ -95,22 +157,144 @@ select option{background:var(--surface)}
     </div>
   </div>
 
+  <!-- ── FINDINGS PREVIEW ── -->
+  <div class="findings-preview" id="findingsPreview">
+    <div class="fp-title">
+      <span id="fpTitle">Non conformità estratte</span>
+      <span style="font-size:.78rem;color:var(--text2);font-weight:400">Verranno create automaticamente al salvataggio</span>
+    </div>
+    <div id="fpList"></div>
+  </div>
+
   <div class="err" id="err"></div>
   <div class="actions">
     <button class="btn btn-primary" onclick="save()">Create Report</button>
     <button class="btn btn-ghost" onclick="history.back()">Cancel</button>
   </div>
 </main>
-<script>
-function toggleTheme(){const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;localStorage.setItem('odito-theme',t);}
 
+<script>
+const PRIORITY_LABEL={1:'High',2:'Relevant',3:'Medium',4:'Low'};
+const PRIORITY_CLS={1:'p1',2:'p2',3:'p3',4:'p4'};
+let extractedFindings=[];
+let pendingFile=null;
+
+function toggleTheme(){const t=document.documentElement.dataset.theme==='light'?'dark':'light';document.documentElement.dataset.theme=t;localStorage.setItem('odito-theme',t);}
+
+// ── Drag & drop ──────────────────────────────────────────
+function handleDrop(e){
+  e.preventDefault();
+  document.getElementById('pdfDrop').classList.remove('dragover');
+  const file=e.dataTransfer.files[0];
+  if(file) handlePdfSelect(file);
+}
+
+function handlePdfSelect(file){
+  if(!file||file.type!=='application/pdf'){
+    showPdfStatus('error','⚠ Seleziona un file PDF valido');
+    return;
+  }
+  pendingFile=file;
+  document.querySelector('.pdf-drop-text').innerHTML=`<strong>${file.name}</strong> (${(file.size/1024).toFixed(0)} KB)`;
+
+  // Controlla se il server ha la chiave configurata
+  fetch('/api/audits/check-openai').then(r=>r.json()).then(d=>{
+    if(d.configured){
+      extractPdf();
+    } else {
+      document.getElementById('keyRow').style.display='flex';
+      document.getElementById('keyHint').style.display='block';
+      showPdfStatus('loading','🔑 Inserisci la tua OpenAI API key per procedere');
+    }
+  }).catch(()=>extractPdf()); // se endpoint non esiste, prova comunque
+}
+
+function showPdfStatus(type, msg){
+  const el=document.getElementById('pdfStatus');
+  el.className=`pdf-status ${type}`;
+  el.style.display='flex';
+  el.innerHTML=type==='loading'?`<span class="spin">⟳</span> ${msg}`:msg;
+}
+
+async function extractPdf(){
+  if(!pendingFile) return;
+  const key=document.getElementById('openaiKey').value.trim();
+  showPdfStatus('loading','⟳ Estrazione in corso con ChatGPT...');
+
+  const fd=new FormData();
+  fd.append('file', pendingFile);
+  if(key) fd.append('openai_key', key);
+
+  try {
+    const r=await fetch('/api/audits/extract-pdf',{method:'POST',body:fd});
+    const d=await r.json();
+    if(!r.ok){showPdfStatus('error','❌ '+(d.detail||'Errore estrazione'));return;}
+
+    fillForm(d.audit||{});
+    extractedFindings=(d.findings||[]).map((f,i)=>({...f,_id:i}));
+    renderFindingsPreview();
+
+    const nf=extractedFindings.length;
+    const warn=d._truncated?' (PDF troncato, alcuni dati potrebbero mancare)':'';
+    showPdfStatus('success',`✅ Estrazione completata — ${nf} non conformit${nf===1?'à':'à'} trovate${warn}`);
+    document.getElementById('keyRow').style.display='none';
+  } catch(e){
+    showPdfStatus('error','❌ Errore di rete: '+e.message);
+  }
+}
+
+function fillForm(a){
+  const fv=(id,val)=>{const el=document.getElementById(id);if(el&&val!=null)el.value=val;};
+  fv('report_ref',a.report_ref);      fv('title',a.title);
+  fv('audited_entity',a.audited_entity); fv('audit_type',a.audit_type);
+  fv('audit_class',a.audit_class);    fv('overall_result',a.overall_result);
+  fv('previous_result',a.previous_result); fv('previous_result_date',a.previous_result_date);
+  fv('issue_date',a.issue_date);
+  fv('sample_from',a.sample_period_from); fv('sample_to',a.sample_period_to);
+  fv('field_from',a.fieldwork_period_from); fv('field_to',a.fieldwork_period_to);
+  fv('cae',a.chief_audit_executive);  fv('team_manager',a.audit_team_manager);
+  fv('team',a.audit_team);            fv('exit_date',a.exit_meeting_date);
+  fv('exit_participants',a.exit_meeting_participants);
+  fv('background',a.background);
+}
+
+function renderFindingsPreview(){
+  const wrap=document.getElementById('findingsPreview');
+  const list=document.getElementById('fpList');
+  if(!extractedFindings.length){wrap.style.display='none';return;}
+  document.getElementById('fpTitle').textContent=`Non conformità estratte (${extractedFindings.length})`;
+  list.innerHTML=extractedFindings.map(f=>`
+    <div class="fp-item" id="fpi-${f._id}">
+      <span class="fp-ref">${escHtml(f.finding_ref||'—')}</span>
+      <div class="fp-body">
+        <div class="fp-name">${escHtml(f.title)}</div>
+        <div class="fp-sub">
+          <span class="badge ${PRIORITY_CLS[f.priority]||'p3'}">${PRIORITY_LABEL[f.priority]||'—'}</span>
+          ${f.article_ref?`&nbsp;📌 ${escHtml(f.article_ref)}`:''}
+          ${f.description?`&nbsp;· ${escHtml(f.description.substring(0,80))}${f.description.length>80?'…':''}`:''}
+        </div>
+      </div>
+      <button class="fp-remove" onclick="removeExtractedFinding(${f._id})" title="Rimuovi">✕</button>
+    </div>`).join('');
+  wrap.style.display='block';
+}
+
+function removeExtractedFinding(id){
+  extractedFindings=extractedFindings.filter(f=>f._id!==id);
+  renderFindingsPreview();
+}
+
+function escHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ── Save ─────────────────────────────────────────────────
 async function save(){
   const v=(id)=>document.getElementById(id).value.trim()||null;
   const err=document.getElementById('err');
   err.style.display='none';
   const report_ref=v('report_ref'), title=v('title');
   if(!report_ref||!title){err.textContent='Codice Report e Titolo sono obbligatori';err.style.display='block';return;}
-  const body={
+
+  const auditBody={
     report_ref, title,
     audited_entity:v('audited_entity'), audit_type:v('audit_type'), audit_class:v('audit_class'),
     overall_result:v('overall_result'), previous_result:v('previous_result'),
@@ -121,12 +305,24 @@ async function save(){
     chief_audit_executive:v('cae'), audit_team_manager:v('team_manager'),
     audit_team:v('team'), background:v('background')
   };
-  const r=await fetch('/api/audits',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-  if(r.ok){const d=await r.json();window.location.href=`/audit/${d.id}`;}
-  else{const d=await r.json();err.textContent=d.detail||'Errore salvataggio';err.style.display='block';}
+
+  // Se ci sono findings estratti → import-full, altrimenti audit normale
+  if(extractedFindings.length>0){
+    const r=await fetch('/api/audits/import-full',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({audit:auditBody, findings:extractedFindings})
+    });
+    if(r.ok){const d=await r.json();window.location.href=`/audit/${d.id}`;}
+    else{const d=await r.json();err.textContent=d.detail||'Errore salvataggio';err.style.display='block';}
+  } else {
+    const r=await fetch('/api/audits',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(auditBody)});
+    if(r.ok){const d=await r.json();window.location.href=`/audit/${d.id}`;}
+    else{const d=await r.json();err.textContent=d.detail||'Errore salvataggio';err.style.display='block';}
+  }
 }
 
-// check auth
+// Auth check
 fetch('/api/auth/me').then(r=>r.json()).then(me=>{
   if(!me.authenticated) window.location.href='/login';
   else if(me.role!=='auditor'&&!me.is_admin) window.location.href='/';
