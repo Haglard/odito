@@ -150,7 +150,9 @@ async function init(){
   const me=await fetch('/api/auth/me').then(r=>r.json());
   if(!me.authenticated){window.location.href='/login';return;}
   document.getElementById('greet').textContent=`Benvenuto, ${me.name}`;
-  document.getElementById('navUser').textContent=`${me.name} — Log Out`;
+  const roleLabel={'auditor':'Auditor','operational':'Operational'}[me.role]||me.role;
+  const displayRole=me.is_admin?'Admin':roleLabel;
+  document.getElementById('navUser').textContent=`${me.name} (${displayRole}) — Log Out`;
   if(me.role==='auditor'||me.is_admin){
     document.getElementById('navNewAudit').style.display='';
     document.getElementById('linkNew').style.display='';

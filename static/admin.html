@@ -63,7 +63,7 @@ select option{background:var(--surface)}
   <a class="nav-link" href="/my-actions">Le mie azioni</a>
   <a class="nav-link active" href="/admin">Admin</a>
   <button class="theme-btn" onclick="toggleTheme()">🌓</button>
-  <a class="nav-btn" href="#" onclick="logout()">Log Out</a>
+  <a class="nav-btn" href="#" id="navUser" onclick="logout()">Log Out</a>
 </nav>
 
 <main>
@@ -157,6 +157,9 @@ async function init(){
   const me=await fetch('/api/auth/me').then(r=>r.json());
   if(!me.authenticated){window.location.href='/login';return;}
   if(!me.is_admin){window.location.href='/';return;}
+  const roleLabel={'auditor':'Auditor','operational':'Operational'}[me.role]||me.role;
+  const displayRole=me.is_admin?'Admin':roleLabel;
+  document.getElementById('navUser').textContent=`${me.name} (${displayRole}) — Log Out`;
   await loadUsers();
 }
 

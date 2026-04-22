@@ -96,7 +96,7 @@ select option{background:var(--surface)}
   <a class="nav-link" href="/my-actions" id="navActions" style="display:none">Le mie azioni</a>
   <a class="nav-link" href="/admin" id="navAdmin" style="display:none">Admin</a>
   <button class="theme-btn" onclick="toggleTheme()">🌓</button>
-  <a class="nav-btn" href="#" onclick="logout()">Log Out</a>
+  <a class="nav-btn" href="#" id="navUser" onclick="logout()">Log Out</a>
 </nav>
 
 <main>
@@ -223,6 +223,9 @@ async function init(){
   const me=await fetch('/api/auth/me').then(r=>r.json());
   if(!me.authenticated){window.location.href='/login';return;}
   currentMe=me;
+  const roleLabel={'auditor':'Auditor','operational':'Operational'}[me.role]||me.role;
+  const displayRole=me.is_admin?'Admin':roleLabel;
+  document.getElementById('navUser').textContent=`${me.name} (${displayRole}) — Log Out`;
   if(me.is_admin) document.getElementById('navAdmin').style.display='';
   document.getElementById('navActions').style.display='';
   const canEdit=me.role==='auditor'||me.is_admin;
