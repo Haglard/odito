@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var t=localStorage.getItem('odito-theme')||'light';document.documentElement.dataset.theme=t;})()</script>
+<title>ODITO — Admin</title>
+<style>
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3349;--text:#e8eaf6;--text2:#8892b0;--accent:#5c7cfa;--accent2:#4263eb;--danger:#f03e3e;--success:#37b24d;--warn:#f59f00}
+[data-theme=light]{--bg:#f0f2f8;--surface:#fff;--surface2:#e8eaf6;--border:#c5cae9;--text:#1a1d27;--text2:#555f7e;--accent:#4263eb;--accent2:#3451d1}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif}
+nav{background:var(--surface);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:100}
+.nav-logo{font-size:1.3rem;font-weight:800;color:var(--accent);text-decoration:none;margin-right:auto}
+.nav-link{color:var(--text2);text-decoration:none;font-size:.9rem;padding:.4rem .75rem;border-radius:6px}
+.nav-link.active,.nav-link:hover{background:var(--surface2);color:var(--text)}
+.nav-btn{padding:.4rem .9rem;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:.85rem;cursor:pointer;text-decoration:none}
+.theme-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:.4rem .7rem;border-radius:6px;cursor:pointer;font-size:.85rem}
+main{max-width:1000px;margin:0 auto;padding:2rem 1.5rem}
+h1{font-size:1.5rem;margin-bottom:.25rem}
+.subtitle{color:var(--text2);margin-bottom:2rem;font-size:.9rem}
+.section-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem}
+.section-title{font-size:1rem;font-weight:600;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:.6rem;color:var(--accent)}
+.btn{padding:.55rem 1.2rem;border:none;border-radius:7px;font-size:.85rem;font-weight:600;cursor:pointer;transition:background .2s}
+.btn-sm{padding:.35rem .8rem;font-size:.78rem}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent2)}
+.btn-ghost{background:var(--surface2);color:var(--text2)}.btn-ghost:hover{background:var(--border)}
+.btn-danger{background:#f03e3e15;color:var(--danger);border:1px solid #f03e3e44}.btn-danger:hover{background:#f03e3e25}
+/* USER TABLE */
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:.75rem;text-transform:uppercase;letter-spacing:.4px;color:var(--text2);padding:.5rem .75rem;border-bottom:1px solid var(--border)}
+td{padding:.75rem;border-bottom:1px solid var(--border);font-size:.88rem;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+.role-badge{display:inline-block;padding:.2rem .55rem;border-radius:12px;font-size:.72rem;font-weight:700}
+.role-badge.admin{background:#5c7cfa22;color:var(--accent)}
+.role-badge.auditor{background:#37b24d22;color:var(--success)}
+.role-badge.operational{background:#f59f0022;color:var(--warn)}
+.actions-cell{display:flex;gap:.4rem;flex-wrap:wrap}
+/* MODAL */
+.overlay{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;z-index:200;display:none}
+.overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem;width:100%;max-width:440px}
+.modal-title{font-size:1.05rem;font-weight:700;margin-bottom:1.25rem}
+.field{margin-bottom:1rem}
+label{display:block;font-size:.8rem;color:var(--text2);margin-bottom:.35rem}
+input,select{width:100%;padding:.65rem .9rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem;outline:none;transition:border .2s;font-family:inherit}
+input:focus,select:focus{border-color:var(--accent)}
+select option{background:var(--surface)}
+.modal-actions{display:flex;gap:.75rem;margin-top:1.25rem;justify-content:flex-end}
+.err{background:#f03e3e22;border:1px solid var(--danger);color:var(--danger);padding:.6rem .9rem;border-radius:7px;margin-top:.75rem;font-size:.83rem;display:none}
+.ok{background:#37b24d22;border:1px solid var(--success);color:var(--success);padding:.6rem .9rem;border-radius:7px;margin-top:.75rem;font-size:.83rem;display:none}
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:2rem}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem 1.3rem}
+.stat-card .val{font-size:1.9rem;font-weight:700;line-height:1}
+.stat-card .lbl{color:var(--text2);font-size:.78rem;margin-top:.3rem}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="/">ODITO</a>
+  <a class="nav-link" href="/">Dashboard</a>
+  <a class="nav-link" href="/my-actions">Le mie azioni</a>
+  <a class="nav-link active" href="/admin">Admin</a>
+  <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+  <a class="nav-btn" href="#" onclick="logout()">Log Out</a>
+</nav>
+
+<main>
+  <h1>Pannello Amministrazione</h1>
+  <p class="subtitle">Gestione utenti e configurazione sistema</p>
+
+  <div class="stats" id="statsRow">
+    <div class="stat-card"><div class="val" id="sUsers">—</div><div class="lbl">Utenti totali</div></div>
+    <div class="stat-card"><div class="val" id="sAuditors">—</div><div class="lbl">Auditor</div></div>
+    <div class="stat-card"><div class="val" id="sOperational">—</div><div class="lbl">Operativi</div></div>
+    <div class="stat-card"><div class="val" id="sAdmins">—</div><div class="lbl">Admin</div></div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-title">
+      <span>Gestione Utenti</span>
+      <button class="btn btn-primary btn-sm" onclick="openCreateModal()">+ New User</button>
+    </div>
+    <div id="userTableWrap">
+      <p style="color:var(--text2);font-size:.9rem">Caricamento...</p>
+    </div>
+  </div>
+</main>
+
+<!-- MODAL: Crea utente -->
+<div class="overlay" id="createOverlay">
+  <div class="modal">
+    <div class="modal-title">Crea nuovo utente</div>
+    <div class="field"><label>Nome completo *</label><input id="c_name" placeholder="Mario Rossi"></div>
+    <div class="field"><label>Email *</label><input id="c_email" type="email" placeholder="nome@azienda.com"></div>
+    <div class="field"><label>Password *</label><input id="c_password" type="password" placeholder="••••••••"></div>
+    <div class="field"><label>Ruolo</label>
+      <select id="c_role">
+        <option value="operational">Operativo</option>
+        <option value="auditor">Auditor</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+    <div class="err" id="createErr"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" onclick="closeCreateModal()">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="createUser()">Create</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Modifica ruolo -->
+<div class="overlay" id="roleOverlay">
+  <div class="modal">
+    <div class="modal-title">Cambia ruolo</div>
+    <div id="roleUserInfo" style="font-size:.9rem;margin-bottom:1rem;color:var(--text2)"></div>
+    <div class="field"><label>Nuovo ruolo</label>
+      <select id="r_role">
+        <option value="operational">Operativo</option>
+        <option value="auditor">Auditor</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+    <div class="err" id="roleErr"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" onclick="closeRoleModal()">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="saveRole()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Reset password -->
+<div class="overlay" id="pwdOverlay">
+  <div class="modal">
+    <div class="modal-title">Reset password</div>
+    <div id="pwdUserInfo" style="font-size:.9rem;margin-bottom:1rem;color:var(--text2)"></div>
+    <div class="field"><label>Nuova password *</label><input id="p_password" type="password" placeholder="Nuova password"></div>
+    <div class="err" id="pwdErr"></div>
+    <div class="ok" id="pwdOk"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" onclick="closePwdModal()">Close</button>
+      <button class="btn btn-primary btn-sm" onclick="savePwd()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let allUsers=[], editingUserId=null;
+
+function toggleTheme(){const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;localStorage.setItem('odito-theme',t);}
+async function logout(){await fetch('/api/auth/logout',{method:'POST'});window.location.href='/login';}
+function escHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmtTs(s){if(!s)return'—';return new Date(s).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});}
+
+async function init(){
+  const me=await fetch('/api/auth/me').then(r=>r.json());
+  if(!me.authenticated){window.location.href='/login';return;}
+  if(!me.is_admin){window.location.href='/';return;}
+  await loadUsers();
+}
+
+async function loadUsers(){
+  allUsers=await fetch('/api/admin/users').then(r=>r.json());
+  renderStats(allUsers);
+  renderTable(allUsers);
+}
+
+function renderStats(users){
+  document.getElementById('sUsers').textContent=users.length;
+  document.getElementById('sAuditors').textContent=users.filter(u=>u.role==='auditor'&&!u.is_admin).length;
+  document.getElementById('sOperational').textContent=users.filter(u=>u.role==='operational'&&!u.is_admin).length;
+  document.getElementById('sAdmins').textContent=users.filter(u=>u.is_admin).length;
+}
+
+function renderTable(users){
+  const wrap=document.getElementById('userTableWrap');
+  if(!users.length){wrap.innerHTML='<p style="color:var(--text2);font-size:.9rem">Nessun utente</p>';return;}
+  wrap.innerHTML=`<table>
+    <thead><tr>
+      <th>Nome</th><th>Email</th><th>Ruolo</th><th>Registrato</th><th>Azioni</th>
+    </tr></thead>
+    <tbody>${users.map(u=>{
+      const roleCls=u.is_admin?'admin':u.role;
+      const roleLabel=u.is_admin?'Admin':(u.role==='auditor'?'Auditor':'Operativo');
+      return `<tr>
+        <td>${escHtml(u.name)}</td>
+        <td>${escHtml(u.email)}</td>
+        <td><span class="role-badge ${roleCls}">${roleLabel}</span></td>
+        <td>${fmtTs(u.created_at)}</td>
+        <td><div class="actions-cell">
+          <button class="btn btn-ghost btn-sm" onclick="openRoleModal(${u.id})">Role</button>
+          <button class="btn btn-ghost btn-sm" onclick="openPwdModal(${u.id})">Password</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id},'${escHtml(u.name)}')">Delete</button>
+        </div></td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+// --- Create ---
+function openCreateModal(){
+  ['c_name','c_email','c_password'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('c_role').value='operational';
+  document.getElementById('createErr').style.display='none';
+  document.getElementById('createOverlay').classList.add('open');
+}
+function closeCreateModal(){document.getElementById('createOverlay').classList.remove('open');}
+
+async function createUser(){
+  const v=(id)=>document.getElementById(id).value.trim()||null;
+  const err=document.getElementById('createErr');
+  err.style.display='none';
+  if(!v('c_name')||!v('c_email')||!v('c_password')){err.textContent='Tutti i campi obbligatori';err.style.display='block';return;}
+  const body={name:v('c_name'),email:v('c_email'),password:v('c_password')};
+  const r=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!r.ok){const d=await r.json();err.textContent=d.detail||'Errore';err.style.display='block';return;}
+  // set role if not operational
+  const role=document.getElementById('c_role').value;
+  if(role!=='operational'){
+    const usersNow=await fetch('/api/admin/users').then(r=>r.json());
+    const created=usersNow.find(u=>u.email===v('c_email'));
+    if(created){
+      await fetch(`/api/admin/users/${created.id}/role`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({role,is_admin:role==='admin'})});
+    }
+  }
+  closeCreateModal();
+  await loadUsers();
+}
+
+// --- Role ---
+function openRoleModal(userId){
+  editingUserId=userId;
+  const u=allUsers.find(x=>x.id===userId);
+  document.getElementById('roleUserInfo').textContent=`Utente: ${u.name} (${u.email})`;
+  document.getElementById('r_role').value=u.is_admin?'admin':u.role;
+  document.getElementById('roleErr').style.display='none';
+  document.getElementById('roleOverlay').classList.add('open');
+}
+function closeRoleModal(){document.getElementById('roleOverlay').classList.remove('open');}
+
+async function saveRole(){
+  const role=document.getElementById('r_role').value;
+  const err=document.getElementById('roleErr');
+  err.style.display='none';
+  const body={role: role==='admin'?'auditor':role, is_admin:role==='admin'};
+  const r=await fetch(`/api/admin/users/${editingUserId}/role`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(r.ok){closeRoleModal();await loadUsers();}
+  else{const d=await r.json();err.textContent=d.detail||'Errore';err.style.display='block';}
+}
+
+// --- Password ---
+function openPwdModal(userId){
+  editingUserId=userId;
+  const u=allUsers.find(x=>x.id===userId);
+  document.getElementById('pwdUserInfo').textContent=`Utente: ${u.name} (${u.email})`;
+  document.getElementById('p_password').value='';
+  document.getElementById('pwdErr').style.display='none';
+  document.getElementById('pwdOk').style.display='none';
+  document.getElementById('pwdOverlay').classList.add('open');
+}
+function closePwdModal(){document.getElementById('pwdOverlay').classList.remove('open');}
+
+async function savePwd(){
+  const pwd=document.getElementById('p_password').value.trim();
+  const err=document.getElementById('pwdErr'), ok=document.getElementById('pwdOk');
+  err.style.display='none'; ok.style.display='none';
+  if(!pwd){err.textContent='Inserisci una password';err.style.display='block';return;}
+  const r=await fetch(`/api/admin/users/${editingUserId}/password`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pwd})});
+  if(r.ok){ok.textContent='Password aggiornata';ok.style.display='block';}
+  else{const d=await r.json();err.textContent=d.detail||'Errore';err.style.display='block';}
+}
+
+// --- Delete ---
+async function deleteUser(userId, name){
+  if(!confirm(`Eliminare l'utente "${name}"? L'operazione non può essere annullata.`)) return;
+  const r=await fetch(`/api/admin/users/${userId}`,{method:'DELETE'});
+  if(r.ok) await loadUsers();
+  else alert('Errore durante l\'eliminazione');
+}
+
+document.getElementById('createOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeCreateModal();});
+document.getElementById('roleOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeRoleModal();});
+document.getElementById('pwdOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closePwdModal();});
+init();
+</script>
+</body></html>

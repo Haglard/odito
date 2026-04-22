@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var t=localStorage.getItem('odito-theme')||'light';document.documentElement.dataset.theme=t;})()</script>
+<title>ODITO — Registrazione</title>
+<style>
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3349;--text:#e8eaf6;--text2:#8892b0;--accent:#5c7cfa;--accent2:#4263eb;--danger:#f03e3e;--success:#37b24d}
+[data-theme=light]{--bg:#f0f2f8;--surface:#fff;--surface2:#e8eaf6;--border:#c5cae9;--text:#1a1d27;--text2:#555f7e;--accent:#4263eb;--accent2:#3451d1}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2.5rem;width:100%;max-width:420px}
+.logo{font-size:2rem;font-weight:800;color:var(--accent);text-align:center;margin-bottom:.25rem}
+.logo span{color:var(--text2);font-weight:400;font-size:.9rem}
+h2{text-align:center;font-size:1.2rem;margin-bottom:1.75rem;color:var(--text2)}
+label{display:block;font-size:.8rem;color:var(--text2);margin-bottom:.4rem;margin-top:1rem}
+input{width:100%;padding:.7rem 1rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.95rem;outline:none;transition:border .2s}
+input:focus{border-color:var(--accent)}
+.btn{display:block;width:100%;padding:.85rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;margin-top:1.5rem;transition:background .2s}
+.btn:hover{background:var(--accent2)}
+.link{text-align:center;margin-top:1rem;font-size:.85rem;color:var(--text2)}
+.link a{color:var(--accent);text-decoration:none}
+.err{background:#f03e3e22;border:1px solid var(--danger);color:var(--danger);padding:.7rem 1rem;border-radius:8px;margin-top:1rem;font-size:.85rem;display:none}
+.ok{background:#37b24d22;border:1px solid var(--success);color:var(--success);padding:.7rem 1rem;border-radius:8px;margin-top:1rem;font-size:.85rem;display:none}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">ODITO<br><span>Audit Management System</span></div>
+  <h2>Crea il tuo account</h2>
+  <label>Nome completo</label>
+  <input type="text" id="name" placeholder="Mario Rossi">
+  <label>Email</label>
+  <input type="email" id="email" placeholder="nome@azienda.com">
+  <label>Password</label>
+  <input type="password" id="password" placeholder="••••••••">
+  <div class="err" id="err"></div>
+  <div class="ok" id="ok"></div>
+  <button class="btn" onclick="doRegister()">Create Account</button>
+  <div class="link">Already have an account? <a href="/login">Sign In</a></div>
+</div>
+<script>
+async function doRegister(){
+  const name=document.getElementById('name').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const password=document.getElementById('password').value;
+  const err=document.getElementById('err');
+  const ok=document.getElementById('ok');
+  err.style.display='none'; ok.style.display='none';
+  if(!name||!email||!password){err.textContent='Compila tutti i campi';err.style.display='block';return;}
+  const r=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password})});
+  if(r.ok){ok.textContent='Account creato! Reindirizzamento...';ok.style.display='block';setTimeout(()=>window.location.href='/login',1200);}
+  else{const d=await r.json();err.textContent=d.detail||'Errore registrazione';err.style.display='block';}
+}
+</script>
+</body></html>

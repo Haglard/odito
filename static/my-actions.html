@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var t=localStorage.getItem('odito-theme')||'light';document.documentElement.dataset.theme=t;})()</script>
+<title>ODITO — Le mie azioni</title>
+<style>
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3349;--text:#e8eaf6;--text2:#8892b0;--accent:#5c7cfa;--accent2:#4263eb;--danger:#f03e3e;--success:#37b24d;--warn:#f59f00;--info:#1c7ed6;
+--p1:#f03e3e;--p2:#f59f00;--p3:#1c7ed6;--p4:#37b24d}
+[data-theme=light]{--bg:#f0f2f8;--surface:#fff;--surface2:#e8eaf6;--border:#c5cae9;--text:#1a1d27;--text2:#555f7e;--accent:#4263eb;--accent2:#3451d1}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif}
+nav{background:var(--surface);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:100}
+.nav-logo{font-size:1.3rem;font-weight:800;color:var(--accent);text-decoration:none;margin-right:auto}
+.nav-link{color:var(--text2);text-decoration:none;font-size:.9rem;padding:.4rem .75rem;border-radius:6px}
+.nav-link.active,.nav-link:hover{background:var(--surface2);color:var(--text)}
+.nav-btn{padding:.4rem .9rem;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:.85rem;cursor:pointer;text-decoration:none}
+.theme-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:.4rem .7rem;border-radius:6px;cursor:pointer;font-size:.85rem}
+main{max-width:1000px;margin:0 auto;padding:2rem 1.5rem}
+h1{font-size:1.5rem;margin-bottom:.25rem}
+.subtitle{color:var(--text2);margin-bottom:1.75rem;font-size:.9rem}
+.filter-row{display:flex;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center}
+.filter-row label{font-size:.8rem;color:var(--text2)}
+.filter-row select{padding:.4rem .75rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.85rem;outline:none;cursor:pointer}
+.filter-row select option{background:var(--surface)}
+.badge{display:inline-block;padding:.22rem .6rem;border-radius:20px;font-size:.7rem;font-weight:700;letter-spacing:.3px}
+.badge.p1{background:#f03e3e22;color:var(--p1)}
+.badge.p2{background:#f59f0022;color:var(--p2)}
+.badge.p3{background:#1c7ed622;color:var(--p3)}
+.badge.p4{background:#37b24d22;color:var(--p4)}
+.badge.pending{background:#5c7cfa22;color:var(--accent)}
+.badge.in_progress{background:#f59f0022;color:var(--warn)}
+.badge.completed{background:#37b24d22;color:var(--success)}
+.badge.overdue{background:#f03e3e22;color:var(--danger)}
+/* MEASURE CARD */
+.measure-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.4rem;margin-bottom:1.1rem;transition:border-color .2s}
+.measure-card.expanded{border-color:var(--accent)}
+.measure-card-top{display:flex;align-items:flex-start;gap:.75rem;cursor:pointer}
+.measure-card-top:hover .mc-title{color:var(--accent)}
+.mc-badges{display:flex;gap:.5rem;flex-shrink:0;align-items:center}
+.mc-title{font-size:.95rem;font-weight:600;flex:1;line-height:1.4}
+.mc-meta{font-size:.78rem;color:var(--text2);margin-top:.4rem;display:flex;flex-wrap:wrap;gap:.75rem}
+.mc-meta .overdue-date{color:var(--danger);font-weight:600}
+.mc-audit-ref{font-size:.72rem;color:var(--text2);font-family:monospace;margin-top:.25rem}
+.expand-body{margin-top:1rem;border-top:1px solid var(--border);padding-top:1rem;display:none}
+.measure-card.expanded .expand-body{display:block}
+.expand-desc{font-size:.85rem;color:var(--text2);line-height:1.6;margin-bottom:1rem;white-space:pre-wrap}
+/* STATUS UPDATE */
+.status-row{display:flex;align-items:center;gap:.65rem;margin-bottom:1rem;flex-wrap:wrap}
+.status-row label{font-size:.8rem;color:var(--text2)}
+.status-row select{padding:.35rem .7rem;font-size:.8rem;border-radius:6px;background:var(--surface2);border:1px solid var(--border);color:var(--text);outline:none;cursor:pointer}
+.btn{padding:.5rem 1.1rem;border:none;border-radius:7px;font-size:.85rem;font-weight:600;cursor:pointer;transition:background .2s}
+.btn-sm{padding:.38rem .85rem;font-size:.8rem}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent2)}
+.btn-ghost{background:var(--surface2);color:var(--text2)}.btn-ghost:hover{background:var(--border)}
+/* LOG */
+.log-section{margin-top:.5rem}
+.log-section-title{font-size:.78rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.65rem}
+.log-entry{padding:.55rem 0;border-bottom:1px solid var(--border);font-size:.83rem}
+.log-entry:last-child{border-bottom:none}
+.log-meta{font-size:.72rem;color:var(--text2);margin-top:.2rem}
+.log-add{display:flex;gap:.5rem;margin-top:.75rem}
+.log-add textarea{flex:1;padding:.5rem .75rem;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.83rem;outline:none;resize:none;height:56px;font-family:inherit;transition:border .2s}
+.log-add textarea:focus{border-color:var(--accent)}
+.err-inline{color:var(--danger);font-size:.78rem;margin-top:.3rem;display:none}
+.empty-state{text-align:center;padding:3rem;color:var(--text2);font-size:.9rem}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="/">ODITO</a>
+  <a class="nav-link" href="/">Dashboard</a>
+  <a class="nav-link active" href="/my-actions">Le mie azioni</a>
+  <a class="nav-link" href="/admin" id="navAdmin" style="display:none">Admin</a>
+  <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+  <a class="nav-btn" href="#" onclick="logout()">Log Out</a>
+</nav>
+
+<main>
+  <h1>Le mie azioni</h1>
+  <p class="subtitle" id="subtitle">Misure correttive a te assegnate</p>
+
+  <div class="filter-row">
+    <label>Stato:</label>
+    <select id="filterStatus" onchange="applyFilter()">
+      <option value="">Tutti</option>
+      <option value="pending">Pending</option>
+      <option value="in_progress">In Progress</option>
+      <option value="completed">Completate</option>
+      <option value="overdue">Scadute</option>
+    </select>
+    <label>Priorità:</label>
+    <select id="filterPriority" onchange="applyFilter()">
+      <option value="">Tutte</option>
+      <option value="1">High (P1)</option>
+      <option value="2">Relevant (P2)</option>
+      <option value="3">Medium (P3)</option>
+      <option value="4">Low (P4)</option>
+    </select>
+  </div>
+
+  <div id="actionList"><p style="color:var(--text2);font-size:.9rem">Caricamento...</p></div>
+</main>
+
+<script>
+const PRIORITY={1:{label:'High',cls:'p1'},2:{label:'Relevant',cls:'p2'},3:{label:'Medium',cls:'p3'},4:{label:'Low',cls:'p4'}};
+const STATUS_LABELS={pending:'Pending',in_progress:'In Progress',completed:'Completed'};
+let allMeasures=[], currentMe=null;
+
+function toggleTheme(){const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;localStorage.setItem('odito-theme',t);}
+async function logout(){await fetch('/api/auth/logout',{method:'POST'});window.location.href='/login';}
+function fmtDate(s){if(!s)return'—';return new Date(s+'T00:00:00').toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});}
+function fmtTs(s){if(!s)return'—';return new Date(s).toLocaleString('it-IT',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}
+function escHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function isOverdue(d){if(!d)return false;return new Date(d+'T00:00:00')<new Date();}
+
+async function init(){
+  const me=await fetch('/api/auth/me').then(r=>r.json());
+  if(!me.authenticated){window.location.href='/login';return;}
+  currentMe=me;
+  if(me.is_admin) document.getElementById('navAdmin').style.display='';
+  document.getElementById('subtitle').textContent=`Misure correttive assegnate a ${me.name}`;
+
+  allMeasures=await fetch('/api/my-actions').then(r=>r.json());
+  applyFilter();
+}
+
+function applyFilter(){
+  const st=document.getElementById('filterStatus').value;
+  const pr=document.getElementById('filterPriority').value;
+  let filtered=allMeasures.filter(m=>{
+    const od=isOverdue(m.deadline)&&m.status!=='completed';
+    const effStatus=od?'overdue':m.status;
+    if(st&&effStatus!==st) return false;
+    if(pr&&String(m.priority)!==pr) return false;
+    return true;
+  });
+  renderMeasures(filtered);
+}
+
+function renderMeasures(measures){
+  const el=document.getElementById('actionList');
+  if(!measures.length){el.innerHTML='<div class="empty-state">Nessuna azione trovata</div>';return;}
+  el.innerHTML=measures.map(m=>{
+    const p=PRIORITY[m.priority]||{label:'—',cls:'p3'};
+    const od=isOverdue(m.deadline)&&m.status!=='completed';
+    const stCls=od?'overdue':m.status;
+    const stLbl=od?'Scaduta':STATUS_LABELS[m.status]||m.status;
+    const dateClass=od?'overdue-date':'';
+    return `<div class="measure-card" id="mc-${m.id}">
+      <div class="measure-card-top" onclick="toggleExpand(${m.id})">
+        <div style="flex:1">
+          <div class="mc-title">${escHtml(m.description)}</div>
+          <div class="mc-meta">
+            <span class="${dateClass}">📅 Scadenza: ${fmtDate(m.deadline)}</span>
+          </div>
+          <div class="mc-audit-ref">
+            <a href="/finding/${m.finding_id}" onclick="event.stopPropagation()" style="color:var(--accent);text-decoration:none">
+              ${escHtml(m.report_ref||'—')} › ${escHtml(m.finding_ref||'—')} › ${escHtml(m.finding_title||'')}
+            </a>
+          </div>
+        </div>
+        <div class="mc-badges">
+          <span class="badge ${p.cls}">${p.label}</span>
+          <span class="badge ${stCls}">${stLbl}</span>
+        </div>
+      </div>
+      <div class="expand-body">
+        ${m.description?`<div class="expand-desc">${escHtml(m.description)}</div>`:''}
+        <div class="status-row">
+          <label>Aggiorna stato:</label>
+          <select onchange="updateStatus(${m.id}, this.value)">
+            <option value="pending" ${m.status==='pending'?'selected':''}>Pending</option>
+            <option value="in_progress" ${m.status==='in_progress'?'selected':''}>In Progress</option>
+            <option value="completed" ${m.status==='completed'?'selected':''}>Completed</option>
+          </select>
+        </div>
+        <div class="log-section">
+          <div class="log-section-title">Log di remediation</div>
+          <div id="log-${m.id}"><span style="color:var(--text2);font-size:.82rem">Caricamento...</span></div>
+          <div class="log-add">
+            <textarea id="logtxt-${m.id}" placeholder="Aggiungi nota di avanzamento..."></textarea>
+            <button class="btn btn-primary btn-sm" onclick="addLog(${m.id})">Send</button>
+          </div>
+          <div class="err-inline" id="logerr-${m.id}"></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function toggleExpand(id){
+  const card=document.getElementById(`mc-${id}`);
+  const wasExpanded=card.classList.contains('expanded');
+  // collapse all
+  document.querySelectorAll('.measure-card.expanded').forEach(c=>c.classList.remove('expanded'));
+  if(!wasExpanded){
+    card.classList.add('expanded');
+    await loadLogs(id);
+  }
+}
+
+async function updateStatus(measureId, status){
+  const r=await fetch(`/api/measures/${measureId}/status`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});
+  if(r.ok){
+    allMeasures=await fetch('/api/my-actions').then(r=>r.json());
+    applyFilter();
+  }
+}
+
+async function loadLogs(measureId){
+  const logs=await fetch(`/api/measures/${measureId}/logs`).then(r=>r.json());
+  const el=document.getElementById(`log-${measureId}`);
+  if(!el) return;
+  if(!logs.length){el.innerHTML='<p style="color:var(--text2);font-size:.8rem;margin-bottom:.4rem">Nessuna nota</p>';return;}
+  el.innerHTML=logs.map(l=>`<div class="log-entry">
+    <div>${escHtml(l.note)}</div>
+    <div class="log-meta">${escHtml(l.author_name||'—')} · ${fmtTs(l.created_at)}</div>
+  </div>`).join('');
+}
+
+async function addLog(measureId){
+  const txt=document.getElementById(`logtxt-${measureId}`);
+  const errEl=document.getElementById(`logerr-${measureId}`);
+  errEl.style.display='none';
+  const note=txt.value.trim();
+  if(!note){errEl.textContent='Inserisci una nota';errEl.style.display='block';return;}
+  const r=await fetch(`/api/measures/${measureId}/logs`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({note})});
+  if(r.ok){txt.value='';await loadLogs(measureId);}
+  else{const d=await r.json();errEl.textContent=d.detail||'Errore';errEl.style.display='block';}
+}
+
+init();
+</script>
+</body></html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var t=localStorage.getItem('odito-theme')||'light';document.documentElement.dataset.theme=t;})()</script>
+<title>ODITO — Dashboard</title>
+<style>
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3349;--text:#e8eaf6;--text2:#8892b0;--accent:#5c7cfa;--accent2:#4263eb;--danger:#f03e3e;--success:#37b24d;--warn:#f59f00;--info:#1c7ed6;
+--p1:#f03e3e;--p2:#f59f00;--p3:#1c7ed6;--p4:#37b24d}
+[data-theme=light]{--bg:#f0f2f8;--surface:#fff;--surface2:#e8eaf6;--border:#c5cae9;--text:#1a1d27;--text2:#555f7e;--accent:#4263eb;--accent2:#3451d1}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh}
+/* NAV */
+nav{background:var(--surface);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:100}
+.nav-logo{font-size:1.3rem;font-weight:800;color:var(--accent);text-decoration:none;margin-right:auto}
+.nav-link{color:var(--text2);text-decoration:none;font-size:.9rem;padding:.4rem .75rem;border-radius:6px;transition:background .2s}
+.nav-link:hover,.nav-link.active{background:var(--surface2);color:var(--text)}
+.nav-btn{padding:.4rem .9rem;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:.85rem;cursor:pointer;text-decoration:none}
+.theme-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:.4rem .7rem;border-radius:6px;cursor:pointer;font-size:.85rem}
+/* MAIN */
+main{max-width:1200px;margin:0 auto;padding:2rem 1.5rem}
+h1{font-size:1.6rem;margin-bottom:.25rem}
+.subtitle{color:var(--text2);margin-bottom:2rem;font-size:.95rem}
+/* STAT CARDS */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:2.5rem}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1.5rem}
+.stat-card .val{font-size:2.2rem;font-weight:700;line-height:1}
+.stat-card .lbl{color:var(--text2);font-size:.8rem;margin-top:.4rem}
+.stat-card.danger .val{color:var(--danger)}
+.stat-card.warn .val{color:var(--warn)}
+.stat-card.success .val{color:var(--success)}
+/* GRID */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}}
+.section-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem}
+.section-title{font-size:1rem;font-weight:600;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between}
+.section-title a{font-size:.8rem;color:var(--accent);text-decoration:none}
+/* PRIORITY BADGE */
+.badge{display:inline-block;padding:.2rem .6rem;border-radius:20px;font-size:.72rem;font-weight:700;letter-spacing:.3px}
+.badge.p1{background:#f03e3e22;color:var(--p1)}
+.badge.p2{background:#f59f0022;color:var(--p2)}
+.badge.p3{background:#1c7ed622;color:var(--p3)}
+.badge.p4{background:#37b24d22;color:var(--p4)}
+.badge.open{background:#5c7cfa22;color:var(--accent)}
+.badge.closed{background:#37b24d22;color:var(--success)}
+.badge.satisfactory{background:#37b24d22;color:var(--success)}
+.badge.unsatisfactory{background:#f03e3e22;color:var(--danger)}
+.badge.poor{background:#f03e3e33;color:var(--danger)}
+.badge.good{background:#37b24d22;color:var(--success)}
+/* AUDIT LIST */
+.audit-item{padding:.75rem 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem;cursor:pointer;transition:background .15s}
+.audit-item:last-child{border-bottom:none}
+.audit-item:hover{background:var(--surface2);margin:0 -.5rem;padding:.75rem .5rem;border-radius:6px}
+.audit-ref{font-size:.75rem;color:var(--text2);font-family:monospace}
+.audit-title{font-size:.9rem;flex:1}
+.audit-meta{font-size:.75rem;color:var(--text2)}
+/* DEADLINE LIST */
+.dl-item{padding:.6rem 0;border-bottom:1px solid var(--border);display:grid;grid-template-columns:1fr auto;gap:.5rem;align-items:start}
+.dl-item:last-child{border-bottom:none}
+.dl-text{font-size:.85rem}
+.dl-sub{font-size:.75rem;color:var(--text2);margin-top:.15rem}
+.dl-date{font-size:.75rem;font-weight:600;white-space:nowrap}
+.dl-date.overdue{color:var(--danger)}
+.dl-date.soon{color:var(--warn)}
+/* PRIORITY BARS */
+.pbar-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.6rem}
+.pbar-label{font-size:.8rem;width:65px;flex-shrink:0}
+.pbar-wrap{flex:1;background:var(--surface2);border-radius:4px;height:8px}
+.pbar-fill{height:8px;border-radius:4px;transition:width .5s}
+.pbar-val{font-size:.8rem;color:var(--text2);width:20px;text-align:right}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="/">ODITO</a>
+  <a class="nav-link active" href="/">Dashboard</a>
+  <a class="nav-link" href="/my-actions" id="navActions" style="display:none">Le mie azioni</a>
+  <a class="nav-link" id="navNewAudit" href="/audit/new" style="display:none">+ Nuovo Audit</a>
+  <a class="nav-link" href="/admin" id="navAdmin" style="display:none">Admin</a>
+  <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+  <a class="nav-btn" href="#" id="navUser" onclick="logout()">Log Out</a>
+</nav>
+
+<main>
+  <h1>Dashboard</h1>
+  <p class="subtitle" id="greet">Benvenuto in ODITO</p>
+
+  <div class="stats" id="statsRow">
+    <div class="stat-card"><div class="val" id="sAudits">—</div><div class="lbl">Audit totali</div></div>
+    <div class="stat-card warn"><div class="val" id="sOpen">—</div><div class="lbl">Audit aperti</div></div>
+    <div class="stat-card danger"><div class="val" id="sFindings">—</div><div class="lbl">Non conformità aperte</div></div>
+    <div class="stat-card danger"><div class="val" id="sOverdue">—</div><div class="lbl">Misure scadute</div></div>
+    <div class="stat-card success"><div class="val" id="sDone">—</div><div class="lbl">Misure completate</div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="section-card">
+      <div class="section-title">
+        <span>Audit recenti</span>
+        <a href="/audit/new" id="linkNew" style="display:none">+ Nuovo</a>
+      </div>
+      <div id="auditList"><span style="color:var(--text2);font-size:.9rem">Caricamento...</span></div>
+    </div>
+
+    <div>
+      <div class="section-card" style="margin-bottom:1.5rem">
+        <div class="section-title"><span>Non conformità per priorità</span></div>
+        <div id="priorBars"></div>
+      </div>
+      <div class="section-card">
+        <div class="section-title"><span>Prossime scadenze</span></div>
+        <div id="deadlines"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+const PRIORITY={1:{label:'High',cls:'p1'},2:{label:'Relevant',cls:'p2'},3:{label:'Medium',cls:'p3'},4:{label:'Low',cls:'p4'}};
+const RESULT_CLS={'Good':'good','Satisfactory':'satisfactory','Unsatisfactory':'unsatisfactory','Poor':'poor'};
+
+function toggleTheme(){
+  const t=document.documentElement.dataset.theme==='dark'?'light':'dark';
+  document.documentElement.dataset.theme=t;
+  localStorage.setItem('odito-theme',t);
+}
+
+async function logout(){
+  await fetch('/api/auth/logout',{method:'POST'});
+  window.location.href='/login';
+}
+
+function fmtDate(s){
+  if(!s)return'—';
+  const d=new Date(s+'T00:00:00');
+  return d.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});
+}
+
+function isOverdue(d){
+  if(!d)return false;
+  return new Date(d+'T00:00:00') < new Date();
+}
+function isSoon(d){
+  if(!d)return false;
+  const diff=(new Date(d+'T00:00:00')-new Date())/86400000;
+  return diff>=0 && diff<=14;
+}
+
+async function init(){
+  const me=await fetch('/api/auth/me').then(r=>r.json());
+  if(!me.authenticated){window.location.href='/login';return;}
+  document.getElementById('greet').textContent=`Benvenuto, ${me.name}`;
+  document.getElementById('navUser').textContent=`${me.name} — Log Out`;
+  if(me.role==='auditor'||me.is_admin){
+    document.getElementById('navNewAudit').style.display='';
+    document.getElementById('linkNew').style.display='';
+  }
+  if(me.is_admin) document.getElementById('navAdmin').style.display='';
+  document.getElementById('navActions').style.display='';
+
+  const data=await fetch('/api/dashboard').then(r=>r.json());
+
+  // stats
+  document.getElementById('sAudits').textContent=data.total_audits;
+  document.getElementById('sOpen').textContent=data.open_audits;
+  document.getElementById('sFindings').textContent=data.open_findings;
+  document.getElementById('sOverdue').textContent=data.overdue_measures;
+  document.getElementById('sDone').textContent=data.completed_measures;
+
+  // recent audits
+  const al=document.getElementById('auditList');
+  if(!data.recent_audits.length){al.innerHTML='<span style="color:var(--text2);font-size:.9rem">Nessun audit ancora</span>';return;}
+  al.innerHTML=data.recent_audits.map(a=>{
+    const rc=RESULT_CLS[a.overall_result]||'';
+    const rb=a.overall_result?`<span class="badge ${rc}">${a.overall_result}</span>`:'';
+    return `<div class="audit-item" onclick="location.href='/audit/${a.id}'">
+      <div style="flex:1">
+        <div class="audit-ref">${a.report_ref}</div>
+        <div class="audit-title">${a.title}</div>
+        <div class="audit-meta">${a.audited_entity||''} &nbsp;·&nbsp; ${a.finding_count||0} finding</div>
+      </div>
+      ${rb}
+    </div>`;
+  }).join('');
+
+  // priority bars
+  const bp=data.findings_by_priority;
+  const maxVal=Math.max(1,...Object.values(bp));
+  const pb=document.getElementById('priorBars');
+  [1,2,3,4].forEach(p=>{
+    const n=bp[p]||0;
+    const pct=Math.round(n/maxVal*100);
+    const c=PRIORITY[p];
+    pb.innerHTML+=`<div class="pbar-row">
+      <div class="pbar-label"><span class="badge ${c.cls}">${c.label}</span></div>
+      <div class="pbar-wrap"><div class="pbar-fill" style="width:${pct}%;background:var(--${c.cls.replace('p','p')})" data-pct="${pct}"></div></div>
+      <div class="pbar-val">${n}</div>
+    </div>`;
+  });
+  // fix colors
+  pb.querySelectorAll('.pbar-fill').forEach(el=>{
+    const row=el.closest('.pbar-row');
+    const badge=row.querySelector('.badge');
+    const cls=[...badge.classList].find(c=>c.startsWith('p')&&c.length===2);
+    const colors={p1:'var(--p1)',p2:'var(--p2)',p3:'var(--p3)',p4:'var(--p4)'};
+    el.style.background=colors[cls]||'var(--accent)';
+  });
+
+  // deadlines
+  const dl=document.getElementById('deadlines');
+  if(!data.upcoming_deadlines.length){dl.innerHTML='<span style="color:var(--text2);font-size:.85rem">Nessuna scadenza imminente</span>';return;}
+  dl.innerHTML=data.upcoming_deadlines.map(m=>{
+    const od=isOverdue(m.deadline);
+    const so=!od&&isSoon(m.deadline);
+    const p=PRIORITY[m.priority]||{cls:'p3'};
+    return `<div class="dl-item">
+      <div>
+        <div class="dl-text">${m.description.substring(0,60)}${m.description.length>60?'…':''}</div>
+        <div class="dl-sub"><span class="badge ${p.cls}">${p.label||''}</span> &nbsp;${m.report_ref} · ${m.action_owner_name||'—'}</div>
+      </div>
+      <div class="dl-date ${od?'overdue':so?'soon':''}">${fmtDate(m.deadline)}</div>
+    </div>`;
+  }).join('');
+}
+init();
+</script>
+</body></html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<script>(function(){var t=localStorage.getItem('odito-theme')||'light';document.documentElement.dataset.theme=t;})()</script>
+<title>ODITO — Nuovo Audit</title>
+<style>
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3349;--text:#e8eaf6;--text2:#8892b0;--accent:#5c7cfa;--accent2:#4263eb;--danger:#f03e3e;--success:#37b24d}
+[data-theme=light]{--bg:#f0f2f8;--surface:#fff;--surface2:#e8eaf6;--border:#c5cae9;--text:#1a1d27;--text2:#555f7e;--accent:#4263eb;--accent2:#3451d1}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif}
+nav{background:var(--surface);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;align-items:center;gap:1rem}
+.nav-logo{font-size:1.3rem;font-weight:800;color:var(--accent);text-decoration:none;margin-right:auto}
+.nav-link{color:var(--text2);text-decoration:none;font-size:.9rem;padding:.4rem .75rem;border-radius:6px}
+.nav-link:hover{background:var(--surface2);color:var(--text)}
+.theme-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:.4rem .7rem;border-radius:6px;cursor:pointer;font-size:.85rem}
+main{max-width:900px;margin:0 auto;padding:2rem 1.5rem}
+h1{font-size:1.5rem;margin-bottom:.25rem}
+.subtitle{color:var(--text2);margin-bottom:2rem;font-size:.9rem}
+.form-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.75rem;margin-bottom:1.5rem}
+.section-title{font-size:1rem;font-weight:600;margin-bottom:1.25rem;color:var(--accent);border-bottom:1px solid var(--border);padding-bottom:.6rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}}
+.field{margin-bottom:1rem}
+label{display:block;font-size:.8rem;color:var(--text2);margin-bottom:.35rem}
+input,select,textarea{width:100%;padding:.65rem .9rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.9rem;outline:none;transition:border .2s;font-family:inherit}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+textarea{resize:vertical;min-height:80px}
+select option{background:var(--surface)}
+.actions{display:flex;gap:1rem;margin-top:1.5rem}
+.btn{padding:.75rem 1.75rem;border:none;border-radius:8px;font-size:.95rem;font-weight:600;cursor:pointer;transition:background .2s}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent2)}
+.btn-ghost{background:var(--surface2);color:var(--text2)}.btn-ghost:hover{background:var(--border)}
+.err{background:#f03e3e22;border:1px solid var(--danger);color:var(--danger);padding:.7rem 1rem;border-radius:8px;margin-top:1rem;font-size:.85rem;display:none}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="/">ODITO</a>
+  <a class="nav-link" href="/">Dashboard</a>
+  <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+</nav>
+<main>
+  <h1>Nuovo Audit Report</h1>
+  <p class="subtitle">Inserisci i dati del report di audit</p>
+
+  <div class="form-card">
+    <div class="section-title">Intestazione Report</div>
+    <div class="grid2">
+      <div class="field"><label>Codice Report *</label><input id="report_ref" placeholder="es. 2025-NPG-003"></div>
+      <div class="field"><label>Titolo *</label><input id="title" placeholder="es. DORA Compliance Audit"></div>
+      <div class="field"><label>Entità Auditata</label><input id="audited_entity" placeholder="es. Nexi Greece Payments Institution"></div>
+      <div class="field"><label>Tipo Audit</label><input id="audit_type" placeholder="es. Planned Standard Audit"></div>
+      <div class="field"><label>Classe Audit</label><input id="audit_class" placeholder="es. Legal Entity Audit"></div>
+      <div class="field"><label>Risultato Complessivo</label>
+        <select id="overall_result">
+          <option value="">— seleziona —</option>
+          <option>Good</option><option>Satisfactory</option>
+          <option>Unsatisfactory</option><option>Poor</option>
+        </select>
+      </div>
+      <div class="field"><label>Risultato Precedente</label><input id="previous_result" placeholder="es. Satisfactory"></div>
+      <div class="field"><label>Data Risultato Precedente</label><input id="previous_result_date" type="date"></div>
+      <div class="field"><label>Data Emissione</label><input id="issue_date" type="date"></div>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div class="section-title">Periodi</div>
+    <div class="grid2">
+      <div class="field"><label>Periodo Campione — Da</label><input id="sample_from" type="date"></div>
+      <div class="field"><label>Periodo Campione — A</label><input id="sample_to" type="date"></div>
+      <div class="field"><label>Periodo Fieldwork — Da</label><input id="field_from" type="date"></div>
+      <div class="field"><label>Periodo Fieldwork — A</label><input id="field_to" type="date"></div>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div class="section-title">Team di Audit</div>
+    <div class="grid2">
+      <div class="field"><label>Chief Audit Executive</label><input id="cae" placeholder="Nome e Cognome"></div>
+      <div class="field"><label>Audit Team Manager</label><input id="team_manager" placeholder="Nome e Cognome"></div>
+      <div class="field"><label>Audit Team</label><input id="team" placeholder="es. Mario Rossi, Anna Bianchi"></div>
+      <div class="field"><label>Data Exit Meeting</label><input id="exit_date" type="date"></div>
+    </div>
+    <div class="field"><label>Partecipanti Exit Meeting</label>
+      <textarea id="exit_participants" placeholder="es. Martha Kanner (COO), Efstathios Stathakidis (CISO), ..."></textarea>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div class="section-title">Background / Scope</div>
+    <div class="field">
+      <textarea id="background" style="min-height:140px" placeholder="Descrizione del contesto, obiettivi e scope dell'audit..."></textarea>
+    </div>
+  </div>
+
+  <div class="err" id="err"></div>
+  <div class="actions">
+    <button class="btn btn-primary" onclick="save()">Create Report</button>
+    <button class="btn btn-ghost" onclick="history.back()">Cancel</button>
+  </div>
+</main>
+<script>
+function toggleTheme(){const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;localStorage.setItem('odito-theme',t);}
+
+async function save(){
+  const v=(id)=>document.getElementById(id).value.trim()||null;
+  const err=document.getElementById('err');
+  err.style.display='none';
+  const report_ref=v('report_ref'), title=v('title');
+  if(!report_ref||!title){err.textContent='Codice Report e Titolo sono obbligatori';err.style.display='block';return;}
+  const body={
+    report_ref, title,
+    audited_entity:v('audited_entity'), audit_type:v('audit_type'), audit_class:v('audit_class'),
+    overall_result:v('overall_result'), previous_result:v('previous_result'),
+    previous_result_date:v('previous_result_date'), issue_date:v('issue_date'),
+    sample_period_from:v('sample_from'), sample_period_to:v('sample_to'),
+    fieldwork_period_from:v('field_from'), fieldwork_period_to:v('field_to'),
+    exit_meeting_date:v('exit_date'), exit_meeting_participants:v('exit_participants'),
+    chief_audit_executive:v('cae'), audit_team_manager:v('team_manager'),
+    audit_team:v('team'), background:v('background')
+  };
+  const r=await fetch('/api/audits',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(r.ok){const d=await r.json();window.location.href=`/audit/${d.id}`;}
+  else{const d=await r.json();err.textContent=d.detail||'Errore salvataggio';err.style.display='block';}
+}
+
+// check auth
+fetch('/api/auth/me').then(r=>r.json()).then(me=>{
+  if(!me.authenticated) window.location.href='/login';
+  else if(me.role!=='auditor'&&!me.is_admin) window.location.href='/';
+});
+</script>
+</body></html>
