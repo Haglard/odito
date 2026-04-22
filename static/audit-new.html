@@ -3,17 +3,19 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <script>(function(){var t=localStorage.getItem('odito-theme')||'light';document.documentElement.dataset.theme=t;})()</script>
-<title>ODITO — Nuovo Audit</title>
+<script src="/static/i18n.js"></script>
+<title>ODITO — New Audit</title>
 <style>
 :root{--bg:#f0f2f8;--surface:#fff;--surface2:#e8eaf6;--border:#c5cae9;--text:#1a1d27;--text2:#555f7e;--accent:#4263eb;--accent2:#3451d1;--danger:#f03e3e;--success:#37b24d;--warn:#f59f00}
 [data-theme=dark]{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3349;--text:#e8eaf6;--text2:#8892b0;--accent:#5c7cfa;--accent2:#4263eb}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif}
-nav{background:var(--surface);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;align-items:center;gap:1rem}
+nav{background:var(--surface);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:100}
 .nav-logo{font-size:1.3rem;font-weight:800;color:var(--accent);text-decoration:none;margin-right:auto}
-.nav-link{color:var(--text2);text-decoration:none;font-size:.9rem;padding:.4rem .75rem;border-radius:6px}
+.nav-link{color:var(--text2);text-decoration:none;font-size:.9rem;padding:.4rem .75rem;border-radius:6px;transition:background .2s}
 .nav-link:hover{background:var(--surface2);color:var(--text)}
 .theme-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:.4rem .7rem;border-radius:6px;cursor:pointer;font-size:.85rem}
+.nav-btn{padding:.4rem .9rem;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:.85rem;cursor:pointer;text-decoration:none}
 main{max-width:900px;margin:0 auto;padding:2rem 1.5rem}
 h1{font-size:1.5rem;margin-bottom:.25rem}
 .subtitle{color:var(--text2);margin-bottom:2rem;font-size:.9rem}
@@ -72,114 +74,168 @@ select option{background:var(--surface)}
 <body>
 <nav>
   <a class="nav-logo" href="/">ODITO</a>
-  <a class="nav-link" href="/">Dashboard</a>
+  <a class="nav-link" href="/" id="navDashboard">Dashboard</a>
+  <div class="lang-switcher">
+    <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" data-lang="it" onclick="setLang('it')">IT</button>
+    <button class="lang-btn" data-lang="el" onclick="setLang('el')">EL</button>
+  </div>
   <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+  <a class="nav-btn" href="#" id="navUser" onclick="logout()">Log Out</a>
 </nav>
+
 <main>
-  <h1>Nuovo Audit Report</h1>
-  <p class="subtitle">Importa da PDF oppure compila manualmente</p>
+  <h1 id="pageTitle" data-i18n="page.new_audit">New Audit Report</h1>
+  <p class="subtitle" data-i18n="page.new_audit_sub">Import from PDF or fill manually</p>
 
   <!-- ── PDF IMPORT CARD ── -->
   <div class="form-card">
-    <div class="section-title">🤖 Importa da PDF con AI</div>
+    <div class="section-title" id="pdfSectionTitle">🤖 Import from PDF with AI</div>
     <div class="pdf-drop" id="pdfDrop"
          onclick="document.getElementById('pdfInput').click()"
          ondragover="event.preventDefault();this.classList.add('dragover')"
          ondragleave="this.classList.remove('dragover')"
          ondrop="handleDrop(event)">
       <div class="pdf-drop-icon">📄</div>
-      <div class="pdf-drop-text">Trascina il PDF qui oppure <span>clicca per selezionare</span></div>
-      <div class="pdf-drop-hint">ChatGPT estrarrà automaticamente tutti i campi e le non conformità</div>
+      <div class="pdf-drop-text" id="pdfDropText"><span id="pdfDropLink">click to select</span></div>
+      <div class="pdf-drop-hint" id="pdfDropHint"></div>
     </div>
     <input type="file" id="pdfInput" accept=".pdf" style="display:none" onchange="handlePdfSelect(this.files[0])">
 
     <div class="pdf-status" id="pdfStatus"></div>
 
-    <!-- API key opzionale -->
     <div id="keyRow" class="key-row" style="display:none">
-      <input type="password" id="openaiKey" placeholder="OpenAI API key (sk-...)">
-      <button class="key-toggle" onclick="extractPdf()">🚀 Estrai</button>
+      <input type="password" id="openaiKey" id="openaiKeyInput">
+      <button class="key-toggle" id="btnExtract" onclick="extractPdf()">🚀 Extract</button>
     </div>
-    <div id="keyHint" style="font-size:.75rem;color:var(--text2);margin-top:.5rem;display:none">
-      La chiave non viene salvata sul server.
-    </div>
+    <div id="keyHint" style="font-size:.75rem;color:var(--text2);margin-top:.5rem;display:none"></div>
   </div>
 
-  <!-- ── FORM MANUALE ── -->
+  <!-- ── MANUAL FORM ── -->
   <div class="form-card">
-    <div class="section-title">Intestazione Report</div>
+    <div class="section-title" id="sReportHeader"></div>
     <div class="grid2">
-      <div class="field"><label>Codice Report *</label><input id="report_ref" placeholder="es. 2025-NPG-003"></div>
-      <div class="field"><label>Titolo *</label><input id="title" placeholder="es. DORA Compliance Audit"></div>
-      <div class="field"><label>Entità Auditata</label><input id="audited_entity" placeholder="es. Nexi Greece Payments Institution"></div>
-      <div class="field"><label>Tipo Audit</label><input id="audit_type" placeholder="es. Planned Standard Audit"></div>
-      <div class="field"><label>Classe Audit</label><input id="audit_class" placeholder="es. Legal Entity Audit"></div>
-      <div class="field"><label>Risultato Complessivo</label>
+      <div class="field"><label id="lReportRef"></label><input id="report_ref" placeholder="e.g. 2025-NPG-003"></div>
+      <div class="field"><label id="lTitle"></label><input id="title" placeholder="e.g. DORA Compliance Audit"></div>
+      <div class="field"><label id="lAuditedEntity"></label><input id="audited_entity" placeholder="e.g. Nexi Greece Payments"></div>
+      <div class="field"><label id="lAuditType"></label><input id="audit_type" placeholder="e.g. Planned Standard Audit"></div>
+      <div class="field"><label id="lAuditClass"></label><input id="audit_class" placeholder="e.g. Legal Entity Audit"></div>
+      <div class="field"><label id="lOverallResult"></label>
         <select id="overall_result">
-          <option value="">— seleziona —</option>
+          <option value="" id="optChoose"></option>
           <option>Good</option><option>Satisfactory</option>
           <option>Unsatisfactory</option><option>Poor</option>
         </select>
       </div>
-      <div class="field"><label>Risultato Precedente</label><input id="previous_result" placeholder="es. Satisfactory"></div>
-      <div class="field"><label>Data Risultato Precedente</label><input id="previous_result_date" type="date"></div>
-      <div class="field"><label>Data Emissione</label><input id="issue_date" type="date"></div>
+      <div class="field"><label id="lPrevResult"></label><input id="previous_result" placeholder="e.g. Satisfactory"></div>
+      <div class="field"><label id="lPrevResultDate"></label><input id="previous_result_date" type="date"></div>
+      <div class="field"><label id="lIssueDate"></label><input id="issue_date" type="date"></div>
     </div>
   </div>
 
   <div class="form-card">
-    <div class="section-title">Periodi</div>
+    <div class="section-title" id="sPeriods"></div>
     <div class="grid2">
-      <div class="field"><label>Periodo Campione — Da</label><input id="sample_from" type="date"></div>
-      <div class="field"><label>Periodo Campione — A</label><input id="sample_to" type="date"></div>
-      <div class="field"><label>Periodo Fieldwork — Da</label><input id="field_from" type="date"></div>
-      <div class="field"><label>Periodo Fieldwork — A</label><input id="field_to" type="date"></div>
+      <div class="field"><label id="lSampleFrom"></label><input id="sample_from" type="date"></div>
+      <div class="field"><label id="lSampleTo"></label><input id="sample_to" type="date"></div>
+      <div class="field"><label id="lFieldFrom"></label><input id="field_from" type="date"></div>
+      <div class="field"><label id="lFieldTo"></label><input id="field_to" type="date"></div>
     </div>
   </div>
 
   <div class="form-card">
-    <div class="section-title">Team di Audit</div>
+    <div class="section-title" id="sAuditTeam"></div>
     <div class="grid2">
-      <div class="field"><label>Chief Audit Executive</label><input id="cae" placeholder="Nome e Cognome"></div>
-      <div class="field"><label>Audit Team Manager</label><input id="team_manager" placeholder="Nome e Cognome"></div>
-      <div class="field"><label>Audit Team</label><input id="team" placeholder="es. Mario Rossi, Anna Bianchi"></div>
-      <div class="field"><label>Data Exit Meeting</label><input id="exit_date" type="date"></div>
+      <div class="field"><label id="lCae"></label><input id="cae" placeholder="Name Surname"></div>
+      <div class="field"><label id="lTeamManager"></label><input id="team_manager" placeholder="Name Surname"></div>
+      <div class="field"><label id="lTeam"></label><input id="team" placeholder="e.g. Mario Rossi, Anna Bianchi"></div>
+      <div class="field"><label id="lExitDate"></label><input id="exit_date" type="date"></div>
     </div>
-    <div class="field"><label>Partecipanti Exit Meeting</label>
-      <textarea id="exit_participants" placeholder="es. Martha Kanner (COO), Efstathios Stathakidis (CISO), ..."></textarea>
+    <div class="field"><label id="lExitParticipants"></label>
+      <textarea id="exit_participants" placeholder="e.g. Martha Kanner (COO), John Smith (CISO), ..."></textarea>
     </div>
   </div>
 
   <div class="form-card">
-    <div class="section-title">Background / Scope</div>
+    <div class="section-title" id="sBackground"></div>
     <div class="field">
-      <textarea id="background" style="min-height:140px" placeholder="Descrizione del contesto, obiettivi e scope dell'audit..."></textarea>
+      <textarea id="background" style="min-height:140px"></textarea>
     </div>
   </div>
 
   <!-- ── FINDINGS PREVIEW ── -->
   <div class="findings-preview" id="findingsPreview">
     <div class="fp-title">
-      <span id="fpTitle">Non conformità estratte</span>
-      <span style="font-size:.78rem;color:var(--text2);font-weight:400">Verranno create automaticamente al salvataggio</span>
+      <span id="fpTitle"></span>
+      <span style="font-size:.78rem;color:var(--text2);font-weight:400" id="fpAutoCreate"></span>
     </div>
     <div id="fpList"></div>
   </div>
 
   <div class="err" id="err"></div>
   <div class="actions">
-    <button class="btn btn-primary" onclick="save()">Create Report</button>
-    <button class="btn btn-ghost" onclick="history.back()">Cancel</button>
+    <button class="btn btn-primary" id="btnSave" onclick="save()">Create Report</button>
+    <button class="btn btn-ghost" id="btnCancel" onclick="history.back()">Cancel</button>
   </div>
 </main>
 
 <script>
-const PRIORITY_LABEL={1:'High',2:'Relevant',3:'Medium',4:'Low'};
-const PRIORITY_CLS={1:'p1',2:'p2',3:'p3',4:'p4'};
 let extractedFindings=[];
 let pendingFile=null;
 
-function toggleTheme(){const t=document.documentElement.dataset.theme==='light'?'dark':'light';document.documentElement.dataset.theme=t;localStorage.setItem('odito-theme',t);}
+function toggleTheme(){const th=document.documentElement.dataset.theme==='light'?'dark':'light';document.documentElement.dataset.theme=th;localStorage.setItem('odito-theme',th);}
+async function logout(){await fetch('/api/auth/logout',{method:'POST'});window.location.href='/login';}
+function escHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function applyPageLabels(){
+  // Nav
+  applyNavLinks();
+  // PDF section
+  document.getElementById('pdfSectionTitle').textContent=t('pdf.title');
+  document.getElementById('pdfDropText').innerHTML=`${t('pdf.drop')} <span>${t('pdf.drop_link')}</span>`;
+  document.getElementById('pdfDropHint').textContent=t('pdf.hint');
+  document.getElementById('btnExtract').textContent=t('btn.extract');
+  document.getElementById('openaiKey').placeholder=t('pdf.key_placeholder');
+  document.getElementById('keyHint').textContent=t('pdf.key_hint');
+  document.getElementById('fpAutoCreate').textContent=t('pdf.auto_create');
+  // Section titles
+  document.getElementById('sReportHeader').textContent=t('section.report_header');
+  document.getElementById('sPeriods').textContent=t('section.periods');
+  document.getElementById('sAuditTeam').textContent=t('section.audit_team');
+  document.getElementById('sBackground').textContent=t('section.background');
+  // Form labels
+  document.getElementById('lReportRef').textContent=t('label.report_ref');
+  document.getElementById('lTitle').textContent=t('label.title');
+  document.getElementById('lAuditedEntity').textContent=t('label.audited_entity');
+  document.getElementById('lAuditType').textContent=t('label.audit_type');
+  document.getElementById('lAuditClass').textContent=t('label.audit_class');
+  document.getElementById('lOverallResult').textContent=t('label.overall_result');
+  document.getElementById('lPrevResult').textContent=t('label.previous_result');
+  document.getElementById('lPrevResultDate').textContent=t('label.previous_result_date');
+  document.getElementById('lIssueDate').textContent=t('label.issue_date');
+  document.getElementById('lSampleFrom').textContent=t('label.sample_from');
+  document.getElementById('lSampleTo').textContent=t('label.sample_to');
+  document.getElementById('lFieldFrom').textContent=t('label.field_from');
+  document.getElementById('lFieldTo').textContent=t('label.field_to');
+  document.getElementById('lCae').textContent=t('label.cae');
+  document.getElementById('lTeamManager').textContent=t('label.team_manager');
+  document.getElementById('lTeam').textContent=t('label.team');
+  document.getElementById('lExitDate').textContent=t('label.exit_date');
+  document.getElementById('lExitParticipants').textContent=t('label.exit_participants');
+  document.getElementById('optChoose').textContent=t('select.choose');
+  // Buttons
+  document.getElementById('btnSave').textContent=t('btn.create_report');
+  document.getElementById('btnCancel').textContent=t('btn.cancel');
+  // Background placeholder
+  document.getElementById('background').placeholder=t('label.background')+'...';
+  // Findings preview title (re-render count if needed)
+  if(extractedFindings.length>0) renderFindingsPreview();
+}
+
+function renderPage(){
+  applyPageLabels();
+  applyTranslations();
+}
 
 // ── Drag & drop ──────────────────────────────────────────
 function handleDrop(e){
@@ -191,22 +247,21 @@ function handleDrop(e){
 
 function handlePdfSelect(file){
   if(!file||file.type!=='application/pdf'){
-    showPdfStatus('error','⚠ Seleziona un file PDF valido');
+    showPdfStatus('error','⚠ '+t('err.all_fields'));
     return;
   }
   pendingFile=file;
-  document.querySelector('.pdf-drop-text').innerHTML=`<strong>${file.name}</strong> (${(file.size/1024).toFixed(0)} KB)`;
+  document.getElementById('pdfDropText').innerHTML=`<strong>${escHtml(file.name)}</strong> (${(file.size/1024).toFixed(0)} KB)`;
 
-  // Controlla se il server ha la chiave configurata
   fetch('/api/audits/check-openai').then(r=>r.json()).then(d=>{
     if(d.configured){
       extractPdf();
     } else {
       document.getElementById('keyRow').style.display='flex';
       document.getElementById('keyHint').style.display='block';
-      showPdfStatus('loading','🔑 Inserisci la tua OpenAI API key per procedere');
+      showPdfStatus('loading','🔑 '+t('pdf.key_placeholder'));
     }
-  }).catch(()=>extractPdf()); // se endpoint non esiste, prova comunque
+  }).catch(()=>extractPdf());
 }
 
 function showPdfStatus(type, msg){
@@ -219,7 +274,7 @@ function showPdfStatus(type, msg){
 async function extractPdf(){
   if(!pendingFile) return;
   const key=document.getElementById('openaiKey').value.trim();
-  showPdfStatus('loading','⟳ Estrazione in corso con ChatGPT...');
+  showPdfStatus('loading',`<span class="spin">⟳</span> ${t('pdf.extracting')}`);
 
   const fd=new FormData();
   fd.append('file', pendingFile);
@@ -228,18 +283,18 @@ async function extractPdf(){
   try {
     const r=await fetch('/api/audits/extract-pdf',{method:'POST',body:fd});
     const d=await r.json();
-    if(!r.ok){showPdfStatus('error','❌ '+(d.detail||'Errore estrazione'));return;}
+    if(!r.ok){showPdfStatus('error','❌ '+(d.detail||t('err.all_fields')));return;}
 
     fillForm(d.audit||{});
     extractedFindings=(d.findings||[]).map((f,i)=>({...f,_id:i}));
     renderFindingsPreview();
 
     const nf=extractedFindings.length;
-    const warn=d._truncated?' (PDF troncato, alcuni dati potrebbero mancare)':'';
-    showPdfStatus('success',`✅ Estrazione completata — ${nf} non conformit${nf===1?'à':'à'} trovate${warn}`);
+    const warn=d._truncated?' '+t('pdf.truncated'):'';
+    showPdfStatus('success',`✅ ${t('pdf.success')} ${nf} ${t('pdf.found')}${warn}`);
     document.getElementById('keyRow').style.display='none';
   } catch(e){
-    showPdfStatus('error','❌ Errore di rete: '+e.message);
+    showPdfStatus('error','❌ '+e.message);
   }
 }
 
@@ -262,7 +317,9 @@ function renderFindingsPreview(){
   const wrap=document.getElementById('findingsPreview');
   const list=document.getElementById('fpList');
   if(!extractedFindings.length){wrap.style.display='none';return;}
-  document.getElementById('fpTitle').textContent=`Non conformità estratte (${extractedFindings.length})`;
+  document.getElementById('fpTitle').textContent=`${t('pdf.extracted')} (${extractedFindings.length})`;
+  const PRIORITY_LABEL={1:t('priority.1'),2:t('priority.2'),3:t('priority.3'),4:t('priority.4')};
+  const PRIORITY_CLS={1:'p1',2:'p2',3:'p3',4:'p4'};
   list.innerHTML=extractedFindings.map(f=>`
     <div class="fp-item" id="fpi-${f._id}">
       <span class="fp-ref">${escHtml(f.finding_ref||'—')}</span>
@@ -274,7 +331,7 @@ function renderFindingsPreview(){
           ${f.description?`&nbsp;· ${escHtml(f.description.substring(0,80))}${f.description.length>80?'…':''}`:''}
         </div>
       </div>
-      <button class="fp-remove" onclick="removeExtractedFinding(${f._id})" title="Rimuovi">✕</button>
+      <button class="fp-remove" onclick="removeExtractedFinding(${f._id})" title="${escHtml(t('btn.delete'))}">✕</button>
     </div>`).join('');
   wrap.style.display='block';
 }
@@ -284,15 +341,13 @@ function removeExtractedFinding(id){
   renderFindingsPreview();
 }
 
-function escHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-
 // ── Save ─────────────────────────────────────────────────
 async function save(){
   const v=(id)=>document.getElementById(id).value.trim()||null;
   const err=document.getElementById('err');
   err.style.display='none';
   const report_ref=v('report_ref'), title=v('title');
-  if(!report_ref||!title){err.textContent='Codice Report e Titolo sono obbligatori';err.style.display='block';return;}
+  if(!report_ref||!title){err.textContent=t('err.ref_title');err.style.display='block';return;}
 
   const auditBody={
     report_ref, title,
@@ -306,7 +361,6 @@ async function save(){
     audit_team:v('team'), background:v('background')
   };
 
-  // Se ci sono findings estratti → import-full, altrimenti audit normale
   if(extractedFindings.length>0){
     const r=await fetch('/api/audits/import-full',{
       method:'POST',
@@ -314,18 +368,22 @@ async function save(){
       body:JSON.stringify({audit:auditBody, findings:extractedFindings})
     });
     if(r.ok){const d=await r.json();window.location.href=`/audit/${d.id}`;}
-    else{const d=await r.json();err.textContent=d.detail||'Errore salvataggio';err.style.display='block';}
+    else{const d=await r.json();err.textContent=d.detail||t('err.ref_title');err.style.display='block';}
   } else {
     const r=await fetch('/api/audits',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(auditBody)});
     if(r.ok){const d=await r.json();window.location.href=`/audit/${d.id}`;}
-    else{const d=await r.json();err.textContent=d.detail||'Errore salvataggio';err.style.display='block';}
+    else{const d=await r.json();err.textContent=d.detail||t('err.ref_title');err.style.display='block';}
   }
 }
 
 // Auth check
 fetch('/api/auth/me').then(r=>r.json()).then(me=>{
-  if(!me.authenticated) window.location.href='/login';
-  else if(me.role!=='auditor'&&!me.is_admin) window.location.href='/';
+  if(!me.authenticated){window.location.href='/login';return;}
+  if(me.role!=='auditor'&&!me.is_admin){window.location.href='/';return;}
+  setNavUser(me);
 });
+
+applyPageLabels();
+applyTranslations();
 </script>
 </body></html>

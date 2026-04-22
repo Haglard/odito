@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <script>(function(){var t=localStorage.getItem('odito-theme')||'light';document.documentElement.dataset.theme=t;})()</script>
-<title>ODITO — Non Conformità</title>
+<script src="/static/i18n.js"></script>
+<title>ODITO — Finding</title>
 <style>
-:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3349;--text:#e8eaf6;--text2:#8892b0;--accent:#5c7cfa;--accent2:#4263eb;--danger:#f03e3e;--success:#37b24d;--warn:#f59f00;--info:#1c7ed6;
---p1:#f03e3e;--p2:#f59f00;--p3:#1c7ed6;--p4:#37b24d}
-[data-theme=light]{--bg:#f0f2f8;--surface:#fff;--surface2:#e8eaf6;--border:#c5cae9;--text:#1a1d27;--text2:#555f7e;--accent:#4263eb;--accent2:#3451d1}
+:root{--bg:#f0f2f8;--surface:#fff;--surface2:#e8eaf6;--border:#c5cae9;--text:#1a1d27;--text2:#555f7e;--accent:#4263eb;--accent2:#3451d1;--danger:#f03e3e;--success:#37b24d;--warn:#f59f00;--p1:#f03e3e;--p2:#f59f00;--p3:#1c7ed6;--p4:#37b24d}
+[data-theme=dark]{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3349;--text:#e8eaf6;--text2:#8892b0;--accent:#5c7cfa;--accent2:#4263eb}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif}
 nav{background:var(--surface);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:100}
@@ -19,18 +19,12 @@ nav{background:var(--surface);border-bottom:1px solid var(--border);padding:.75r
 main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
 .breadcrumb{font-size:.8rem;color:var(--text2);margin-bottom:1.25rem}
 .breadcrumb a{color:var(--accent);text-decoration:none}
-.badge{display:inline-block;padding:.25rem .65rem;border-radius:20px;font-size:.72rem;font-weight:700;letter-spacing:.3px}
-.badge.p1{background:#f03e3e22;color:var(--p1)}
-.badge.p2{background:#f59f0022;color:var(--p2)}
-.badge.p3{background:#1c7ed622;color:var(--p3)}
-.badge.p4{background:#37b24d22;color:var(--p4)}
-.badge.open{background:#5c7cfa22;color:var(--accent)}
-.badge.closed{background:#37b24d22;color:var(--success)}
-.badge.pending{background:#5c7cfa22;color:var(--accent)}
-.badge.in_progress{background:#f59f0022;color:var(--warn)}
-.badge.completed{background:#37b24d22;color:var(--success)}
-.badge.overdue{background:#f03e3e22;color:var(--danger)}
-/* FINDING HEADER */
+.badge{display:inline-block;padding:.25rem .65rem;border-radius:20px;font-size:.72rem;font-weight:700}
+.badge.p1{background:#f03e3e22;color:var(--p1)}.badge.p2{background:#f59f0022;color:var(--p2)}
+.badge.p3{background:#1c7ed622;color:var(--p3)}.badge.p4{background:#37b24d22;color:var(--p4)}
+.badge.open{background:#5c7cfa22;color:var(--accent)}.badge.closed{background:#37b24d22;color:var(--success)}
+.badge.pending{background:#5c7cfa22;color:var(--accent)}.badge.in_progress{background:#f59f0022;color:var(--warn)}
+.badge.completed{background:#37b24d22;color:var(--success)}.badge.overdue{background:#f03e3e22;color:var(--danger)}
 .finding-header{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.75rem;margin-bottom:1.5rem}
 .fh-top{display:flex;align-items:flex-start;gap:1rem;margin-bottom:1.25rem}
 .fh-ref{font-family:monospace;font-size:.8rem;color:var(--text2);background:var(--surface2);padding:.3rem .6rem;border-radius:4px;white-space:nowrap}
@@ -42,37 +36,29 @@ main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
 .divider{border:none;border-top:1px solid var(--border);margin:1.25rem 0}
 .edit-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text2);padding:.4rem .9rem;border-radius:6px;font-size:.8rem;cursor:pointer}
 .edit-btn:hover{background:var(--border);color:var(--text)}
-/* LAYOUT */
 .two-col{display:grid;grid-template-columns:1fr 340px;gap:1.5rem;align-items:start}
 @media(max-width:800px){.two-col{grid-template-columns:1fr}}
 .section-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem}
 .section-title{font-size:.95rem;font-weight:600;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:.6rem}
-/* MEASURE CARDS */
 .btn{padding:.6rem 1.4rem;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer;transition:background .2s}
-.btn-sm{padding:.4rem 1rem;font-size:.8rem}
-.btn-xs{padding:.3rem .7rem;font-size:.75rem}
+.btn-sm{padding:.4rem 1rem;font-size:.8rem}.btn-xs{padding:.3rem .7rem;font-size:.75rem}
 .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent2)}
 .btn-ghost{background:var(--surface2);color:var(--text2)}.btn-ghost:hover{background:var(--border)}
-.btn-danger{background:transparent;color:var(--danger);border:1px solid #f03e3e44;font-size:.75rem;padding:.3rem .65rem;border-radius:6px;cursor:pointer}
-.btn-danger:hover{background:#f03e3e22}
 .measure-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1.1rem;margin-bottom:1rem}
 .measure-card-top{display:flex;align-items:flex-start;gap:.6rem;margin-bottom:.65rem}
 .measure-title{font-size:.9rem;font-weight:600;flex:1}
 .measure-meta{font-size:.77rem;color:var(--text2);display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:.65rem}
 .measure-meta .overdue-date{color:var(--danger)}
 .measure-desc{font-size:.82rem;color:var(--text2);margin-bottom:.75rem;line-height:1.5}
-/* STATUS SELECTOR */
 .status-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
 .status-row label{font-size:.75rem;color:var(--text2)}
 .status-row select{padding:.3rem .65rem;font-size:.78rem;border-radius:6px;background:var(--surface);border:1px solid var(--border);color:var(--text);outline:none;cursor:pointer}
-/* REMEDIATION LOG */
 .log-entry{padding:.65rem 0;border-bottom:1px solid var(--border);font-size:.83rem}
 .log-entry:last-child{border-bottom:none}
 .log-entry .log-meta{font-size:.73rem;color:var(--text2);margin-top:.25rem}
 .log-add{display:flex;gap:.5rem;margin-top:.75rem}
 .log-add textarea{flex:1;padding:.55rem .75rem;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:.83rem;outline:none;resize:none;height:60px;font-family:inherit}
 .log-add textarea:focus{border-color:var(--accent)}
-/* MODAL */
 .overlay{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;z-index:200;display:none}
 .overlay.open{display:flex}
 .modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem;width:100%;max-width:620px;max-height:90vh;overflow-y:auto}
@@ -92,279 +78,262 @@ select option{background:var(--surface)}
 <body>
 <nav>
   <a class="nav-logo" href="/">ODITO</a>
-  <a class="nav-link" href="/">Dashboard</a>
-  <a class="nav-link" href="/my-actions" id="navActions" style="display:none">Le mie azioni</a>
+  <a class="nav-link" href="/" id="navDashboard">Dashboard</a>
+  <a class="nav-link" href="/my-actions" id="navActions" style="display:none">My Actions</a>
   <a class="nav-link" href="/admin" id="navAdmin" style="display:none">Admin</a>
+  <div class="lang-switcher">
+    <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" data-lang="it" onclick="setLang('it')">IT</button>
+    <button class="lang-btn" data-lang="el" onclick="setLang('el')">EL</button>
+  </div>
   <button class="theme-btn" onclick="toggleTheme()">🌓</button>
   <a class="nav-btn" href="#" id="navUser" onclick="logout()">Log Out</a>
 </nav>
 
 <main>
   <div class="breadcrumb" id="breadcrumb"></div>
-  <div id="findingHeader"><p style="color:var(--text2);font-size:.9rem">Caricamento...</p></div>
-
+  <div id="findingHeader"></div>
   <div class="two-col" id="mainLayout" style="display:none">
-    <!-- LEFT: Misure correttive -->
     <div>
       <div class="section-card">
         <div class="section-title">
-          <span id="measuresCount">Misure correttive</span>
+          <span id="measuresCount"></span>
           <button class="btn btn-primary btn-xs" id="btnAddMeasure" style="display:none" onclick="openMeasureModal()">+ Add</button>
         </div>
-        <div id="measureList"><p style="color:var(--text2);font-size:.85rem">Caricamento...</p></div>
+        <div id="measureList"></div>
       </div>
     </div>
-
-    <!-- RIGHT: Dettaglio + log per misura selezionata -->
     <div>
       <div class="section-card" id="logPanel" style="display:none">
         <div class="section-title">
-          <span>Log Remediation</span>
-          <button class="btn-ghost btn-xs btn" onclick="closeLogPanel()">✕ Close</button>
+          <span id="logPanelTitle"></span>
+          <button class="btn-ghost btn-xs btn" onclick="closeLogPanel()">✕</button>
         </div>
         <div id="logMeasureTitle" style="font-size:.85rem;font-weight:600;margin-bottom:1rem"></div>
         <div id="logList"></div>
-        <div class="log-add" id="logAddRow">
-          <textarea id="logText" placeholder="Aggiungi nota di avanzamento..."></textarea>
-          <button class="btn btn-primary btn-sm" onclick="addLog()">Send</button>
+        <div class="log-add">
+          <textarea id="logText"></textarea>
+          <button class="btn btn-primary btn-sm" id="btnSendLog" onclick="addLog()">Send</button>
         </div>
         <div class="err" id="logErr"></div>
       </div>
       <div class="section-card" id="emptyLogPanel">
-        <p class="empty-state">Seleziona una misura per vedere il log di remediation</p>
+        <p class="empty-state" id="emptyLogMsg"></p>
       </div>
     </div>
   </div>
 </main>
 
-<!-- MODAL: Aggiungi/Modifica Misura -->
+<!-- Measure modal -->
 <div class="overlay" id="measureOverlay">
   <div class="modal">
-    <div class="modal-title" id="measureModalTitle">Aggiungi Misura Correttiva</div>
-    <div class="field">
-      <label class="field-label">Descrizione *</label>
-      <textarea id="m_description" style="min-height:90px" placeholder="Descrizione dettagliata della misura..."></textarea>
-    </div>
+    <div class="modal-title" id="measureModalTitle"></div>
+    <div class="field"><label class="field-label" id="mMDesc"></label><textarea id="m_description" style="min-height:90px"></textarea></div>
     <div class="grid2">
-      <div class="field">
-        <label class="field-label">Responsabile (utente) *</label>
-        <select id="m_owner"></select>
-      </div>
-      <div class="field">
-        <label class="field-label">Nome Responsabile (libero)</label>
-        <input id="m_owner_name" placeholder="es. Martha Kanner">
-      </div>
-      <div class="field">
-        <label class="field-label">Scadenza *</label>
-        <input id="m_deadline" type="date">
-      </div>
-      <div class="field">
-        <label class="field-label">Stato</label>
+      <div class="field"><label class="field-label" id="mMOwner"></label><select id="m_owner"></select></div>
+      <div class="field"><label class="field-label" id="mMOwnerName"></label><input id="m_owner_name"></div>
+      <div class="field"><label class="field-label" id="mMDeadline"></label><input id="m_deadline" type="date"></div>
+      <div class="field"><label class="field-label" id="mMStatus"></label>
         <select id="m_status">
-          <option value="pending">Pending</option>
-          <option value="in_progress">In Progress</option>
-          <option value="completed">Completed</option>
+          <option value="pending" id="msPending"></option>
+          <option value="in_progress" id="msInProgress"></option>
+          <option value="completed" id="msCompleted"></option>
         </select>
       </div>
     </div>
-    <div class="field">
-      <label class="field-label">Note</label>
-      <textarea id="m_notes" style="min-height:60px" placeholder="Note aggiuntive..."></textarea>
-    </div>
+    <div class="field"><label class="field-label" id="mMNotes"></label><textarea id="m_notes" style="min-height:60px"></textarea></div>
     <div class="err" id="measureErr"></div>
     <div class="modal-actions">
-      <button class="btn btn-ghost btn-sm" onclick="closeMeasureModal()">Cancel</button>
-      <button class="btn btn-primary btn-sm" onclick="saveMeasure()">Save</button>
+      <button class="btn btn-ghost btn-sm" id="btnMCancel" onclick="closeMeasureModal()">Cancel</button>
+      <button class="btn btn-primary btn-sm" id="btnMSave" onclick="saveMeasure()">Save</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL: Modifica Finding -->
+<!-- Finding edit modal -->
 <div class="overlay" id="findingEditOverlay">
   <div class="modal">
-    <div class="modal-title">Modifica Non Conformità</div>
+    <div class="modal-title" id="feModalTitle"></div>
     <div class="grid2">
-      <div class="field"><label class="field-label">Numero / Ref *</label><input id="fe_ref"></div>
-      <div class="field"><label class="field-label">Priorità *</label>
+      <div class="field"><label class="field-label" id="feRef"></label><input id="fe_ref"></div>
+      <div class="field"><label class="field-label" id="fePri"></label>
         <select id="fe_priority">
-          <option value="1">High (P1)</option><option value="2">Relevant (P2)</option>
-          <option value="3">Medium (P3)</option><option value="4">Low (P4)</option>
+          <option value="1" id="feP1"></option><option value="2" id="feP2"></option>
+          <option value="3" id="feP3"></option><option value="4" id="feP4"></option>
         </select>
       </div>
     </div>
-    <div class="field"><label class="field-label">Titolo *</label><input id="fe_title"></div>
-    <div class="field"><label class="field-label">Descrizione</label><textarea id="fe_description" style="min-height:90px"></textarea></div>
-    <div class="field"><label class="field-label">Articolo di Riferimento</label><input id="fe_article_ref"></div>
-    <div class="field"><label class="field-label">Root Cause</label><textarea id="fe_root_cause" style="min-height:70px"></textarea></div>
-    <div class="field"><label class="field-label">Raccomandazione</label><textarea id="fe_recommendation" style="min-height:70px"></textarea></div>
+    <div class="field"><label class="field-label" id="feTitle"></label><input id="fe_title"></div>
+    <div class="field"><label class="field-label" id="feDesc"></label><textarea id="fe_description" style="min-height:90px"></textarea></div>
+    <div class="field"><label class="field-label" id="feARef"></label><input id="fe_article_ref"></div>
+    <div class="field"><label class="field-label" id="feRC"></label><textarea id="fe_root_cause" style="min-height:70px"></textarea></div>
+    <div class="field"><label class="field-label" id="feRec"></label><textarea id="fe_recommendation" style="min-height:70px"></textarea></div>
     <div class="err" id="findingEditErr"></div>
     <div class="modal-actions">
-      <button class="btn btn-ghost btn-sm" onclick="closeFindingEditModal()">Cancel</button>
-      <button class="btn btn-primary btn-sm" onclick="saveFindingEdit()">Save</button>
+      <button class="btn btn-ghost btn-sm" id="btnFECancel" onclick="closeFindingEditModal()">Cancel</button>
+      <button class="btn btn-primary btn-sm" id="btnFESave" onclick="saveFindingEdit()">Save</button>
     </div>
   </div>
 </div>
 
 <script>
-const PRIORITY={1:{label:'High',cls:'p1'},2:{label:'Relevant',cls:'p2'},3:{label:'Medium',cls:'p3'},4:{label:'Low',cls:'p4'}};
-const STATUS_LABELS={pending:'Pending',in_progress:'In Progress',completed:'Completed',overdue:'Overdue'};
 const findingId=location.pathname.split('/').pop();
-let currentFinding=null, currentMe=null, editingMeasureId=null, selectedMeasureId=null;
-let allUsers=[];
+let currentFinding=null, currentMe=null, editingMeasureId=null, selectedMeasureId=null, allUsers=[];
 
-function toggleTheme(){const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;localStorage.setItem('odito-theme',t);}
+function toggleTheme(){const th=document.documentElement.dataset.theme==='light'?'dark':'light';document.documentElement.dataset.theme=th;localStorage.setItem('odito-theme',th);}
 async function logout(){await fetch('/api/auth/logout',{method:'POST'});window.location.href='/login';}
-function fmtDate(s){if(!s)return'—';return new Date(s+'T00:00:00').toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});}
-function fmtTs(s){if(!s)return'—';return new Date(s).toLocaleString('it-IT',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}
-function escHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmtDate(s){if(!s)return'—';return new Date(s+'T00:00:00').toLocaleDateString(undefined,{day:'2-digit',month:'short',year:'numeric'});}
+function fmtTs(s){if(!s)return'—';return new Date(s).toLocaleString(undefined,{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}
+function escHtml(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function isOverdue(d){if(!d)return false;return new Date(d+'T00:00:00')<new Date();}
+
+function applyPageLabels(){
+  applyNavLinks();
+  document.getElementById('btnAddMeasure').textContent=t('btn.add');
+  document.getElementById('logPanelTitle').textContent=t('section.log');
+  document.getElementById('emptyLogMsg').textContent=t('msg.select_measure');
+  document.getElementById('btnSendLog').textContent=t('btn.send');
+  document.getElementById('btnMCancel').textContent=t('btn.cancel');
+  document.getElementById('btnMSave').textContent=t('btn.save');
+  document.getElementById('btnFECancel').textContent=t('btn.cancel');
+  document.getElementById('btnFESave').textContent=t('btn.save');
+  document.getElementById('feModalTitle').textContent=t('btn.edit').replace('✏ ','');
+  [['mMDesc','label.description'],['mMOwner','label.owner'],['mMOwnerName','label.owner_name'],
+   ['mMDeadline','label.deadline'],['mMStatus','label.status'],['mMNotes','label.notes'],
+   ['feRef','label.finding_ref'],['fePri','label.priority'],['feTitle','label.title'],
+   ['feDesc','label.description'],['feARef','label.article_ref'],['feRC','label.root_cause'],['feRec','label.recommendation']
+  ].forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.textContent=t(key);});
+  document.getElementById('msPending').textContent=t('status.pending');
+  document.getElementById('msInProgress').textContent=t('status.in_progress');
+  document.getElementById('msCompleted').textContent=t('status.completed');
+  document.getElementById('feP1').textContent=t('priority.1');
+  document.getElementById('feP2').textContent=t('priority.2');
+  document.getElementById('feP3').textContent=t('priority.3');
+  document.getElementById('feP4').textContent=t('priority.4');
+}
+
+function renderPage(){ applyPageLabels(); if(currentFinding) renderFindingHeader(currentFinding, currentMe&&(currentMe.role==='auditor'||currentMe.is_admin)); loadMeasures(); }
 
 async function init(){
   const me=await fetch('/api/auth/me').then(r=>r.json());
   if(!me.authenticated){window.location.href='/login';return;}
-  currentMe=me;
-  const roleLabel={'auditor':'Auditor','operational':'Operational'}[me.role]||me.role;
-  const displayRole=me.is_admin?'Admin':roleLabel;
-  document.getElementById('navUser').textContent=`${me.name} (${displayRole}) — Log Out`;
+  currentMe=me; setNavUser(me); applyPageLabels();
   if(me.is_admin) document.getElementById('navAdmin').style.display='';
   document.getElementById('navActions').style.display='';
   const canEdit=me.role==='auditor'||me.is_admin;
 
   const finding=await fetch(`/api/findings/${findingId}`).then(r=>r.json());
-  if(finding.detail){document.getElementById('findingHeader').innerHTML='<p style="color:var(--danger)">Non conformità non trovata</p>';return;}
+  if(finding.detail){document.getElementById('findingHeader').innerHTML=`<p style="color:var(--danger)">${t('misc.finding_not_found')}</p>`;return;}
   currentFinding=finding;
   document.title=`ODITO — ${finding.finding_ref||'NC'}`;
-
-  // breadcrumb
-  document.getElementById('breadcrumb').innerHTML=`<a href="/">Dashboard</a> › <a href="/audit/${finding.audit_id}">Audit ${escHtml(finding.report_ref||'')}</a> › ${escHtml(finding.finding_ref||'Finding')}`;
-
+  document.getElementById('breadcrumb').innerHTML=`<a href="/">Dashboard</a> › <a href="/audit/${finding.audit_id}">${escHtml(finding.report_ref||'')}</a> › ${escHtml(finding.finding_ref||'')}`;
   renderFindingHeader(finding, canEdit);
   document.getElementById('mainLayout').style.display='grid';
-
   allUsers=await fetch('/api/users').then(r=>r.json());
-  if(canEdit){
-    document.getElementById('btnAddMeasure').style.display='';
-    populateOwnerSelect('m_owner');
-  }
-
+  if(canEdit){document.getElementById('btnAddMeasure').style.display='';populateOwnerSelect('m_owner');}
   await loadMeasures();
 }
 
 function renderFindingHeader(f, canEdit){
-  const p=PRIORITY[f.priority]||{label:'—',cls:'p3'};
-  const stCls=f.status==='closed'?'closed':'open';
+  const pCls=`p${f.priority}`, pLbl=t(`priority.${f.priority}`);
+  const stCls=f.status==='closed'?'closed':'open', stLbl=t(`status.${f.status}`);
   document.getElementById('findingHeader').innerHTML=`
   <div class="finding-header">
     <div class="fh-top">
       <span class="fh-ref">${escHtml(f.finding_ref||'—')}</span>
       <div class="fh-title">${escHtml(f.title)}</div>
       <div class="fh-badges">
-        <span class="badge ${p.cls}">${p.label}</span>
-        <span class="badge ${stCls}">${stCls==='closed'?'Chiusa':'Aperta'}</span>
-        ${canEdit?`<button class="edit-btn" onclick="openFindingEditModal()">✏ Edit</button>`:''}
+        <span class="badge ${pCls}">${pLbl}</span>
+        <span class="badge ${stCls}">${stLbl}</span>
+        ${canEdit?`<button class="edit-btn" onclick="openFindingEditModal()">${t('btn.edit')}</button>`:''}
       </div>
     </div>
-    ${f.article_ref?`<div class="info-block"><div class="lbl">Riferimento normativo</div><div class="val">${escHtml(f.article_ref)}</div></div>`:''}
-    ${f.description?`<hr class="divider"><div class="info-block"><div class="lbl">Descrizione</div><div class="val">${escHtml(f.description)}</div></div>`:''}
-    ${f.root_cause?`<div class="info-block"><div class="lbl">Root Cause</div><div class="val">${escHtml(f.root_cause)}</div></div>`:''}
-    ${f.recommendation?`<div class="info-block"><div class="lbl">Raccomandazione</div><div class="val">${escHtml(f.recommendation)}</div></div>`:''}
+    ${f.article_ref?`<div class="info-block"><div class="lbl">${t('finding.reg_ref')}</div><div class="val">${escHtml(f.article_ref)}</div></div>`:''}
+    ${f.description?`<hr class="divider"><div class="info-block"><div class="lbl">${t('label.description')}</div><div class="val">${escHtml(f.description)}</div></div>`:''}
+    ${f.root_cause?`<div class="info-block"><div class="lbl">${t('finding.root_cause')}</div><div class="val">${escHtml(f.root_cause)}</div></div>`:''}
+    ${f.recommendation?`<div class="info-block"><div class="lbl">${t('finding.recommendation')}</div><div class="val">${escHtml(f.recommendation)}</div></div>`:''}
   </div>`;
 }
 
-function populateOwnerSelect(selectId){
-  const sel=document.getElementById(selectId);
-  sel.innerHTML='<option value="">— nessuno —</option>'+allUsers.map(u=>`<option value="${u.id}">${escHtml(u.name)} (${escHtml(u.email)})</option>`).join('');
+function populateOwnerSelect(selId){
+  const sel=document.getElementById(selId);
+  sel.innerHTML=`<option value="">— ${t('label.owner').replace(' *','')} —</option>`+allUsers.map(u=>`<option value="${u.id}">${escHtml(u.name)}</option>`).join('');
 }
 
 async function loadMeasures(){
   const measures=await fetch(`/api/measures?finding_id=${findingId}`).then(r=>r.json());
-  document.getElementById('measuresCount').textContent=`Misure correttive (${measures.length})`;
+  document.getElementById('measuresCount').textContent=`${t('section.measures')} (${measures.length})`;
   const el=document.getElementById('measureList');
-  if(!measures.length){el.innerHTML='<div class="empty-state">Nessuna misura correttiva</div>';return;}
-  const canEdit=currentMe.role==='auditor'||currentMe.is_admin;
+  if(!measures.length){el.innerHTML=`<div class="empty-state">${t('msg.no_measures')}</div>`;return;}
+  const canEdit=currentMe&&(currentMe.role==='auditor'||currentMe.is_admin);
   el.innerHTML=measures.map(m=>{
-    const stCls=m.status||'pending';
-    const stLbl=STATUS_LABELS[m.status]||m.status;
     const od=isOverdue(m.deadline)&&m.status!=='completed';
-    const deadlineCls=od?'overdue-date':'';
-    const isOwner=m.action_owner_user_id===currentMe.id;
-    const canUpdate=canEdit||isOwner;
-    return `<div class="measure-card" id="mc-${m.id}">
+    const stCls=od?'overdue':m.status, stLbl=od?t('status.overdue'):t(`status.${m.status}`);
+    const isOwner=m.action_owner_user_id===currentMe.id, canUpdate=canEdit||isOwner;
+    return `<div class="measure-card">
       <div class="measure-card-top">
         <div class="measure-title">${escHtml(m.description.substring(0,80))}${m.description.length>80?'…':''}</div>
-        <span class="badge ${od&&m.status!=='completed'?'overdue':stCls}">${od&&m.status!=='completed'?'Scaduta':stLbl}</span>
+        <span class="badge ${stCls}">${stLbl}</span>
       </div>
       <div class="measure-meta">
         <span>👤 ${escHtml(m.action_owner_name||'—')}</span>
-        <span class="${deadlineCls}">📅 ${fmtDate(m.deadline)}</span>
-        <span>💬 ${m.log_count||0} note</span>
+        <span class="${od?'overdue-date':''}">📅 ${fmtDate(m.deadline)}</span>
+        <span>💬 ${m.log_count||0}</span>
       </div>
       ${m.description.length>80?`<div class="measure-desc">${escHtml(m.description)}</div>`:''}
       <div class="status-row">
-        ${canUpdate?`<label>Stato:</label>
+        ${canUpdate?`<label>${t('btn.update_status')}</label>
         <select onchange="updateStatus(${m.id},this.value)">
-          <option value="pending" ${m.status==='pending'?'selected':''}>Pending</option>
-          <option value="in_progress" ${m.status==='in_progress'?'selected':''}>In Progress</option>
-          <option value="completed" ${m.status==='completed'?'selected':''}>Completed</option>
+          <option value="pending" ${m.status==='pending'?'selected':''}>${t('status.pending')}</option>
+          <option value="in_progress" ${m.status==='in_progress'?'selected':''}>${t('status.in_progress')}</option>
+          <option value="completed" ${m.status==='completed'?'selected':''}>${t('status.completed')}</option>
         </select>`:`<span class="badge ${stCls}">${stLbl}</span>`}
-        <button class="btn btn-ghost btn-xs" onclick="selectMeasure(${m.id})">Log</button>
-        ${canEdit?`<button class="btn btn-ghost btn-xs" onclick="openMeasureModal(${JSON.stringify(m).replace(/"/g,'&quot;')})">✏ Edit</button>`:''}
+        <button class="btn btn-ghost btn-xs" onclick="selectMeasure(${m.id})">${t('btn.log')}</button>
+        ${canEdit?`<button class="btn btn-ghost btn-xs" onclick='openMeasureModal(${JSON.stringify(m)})'>${t('btn.edit')}</button>`:''}
       </div>
     </div>`;
   }).join('');
 }
 
-async function updateStatus(measureId, status){
-  const r=await fetch(`/api/measures/${measureId}/status`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});
-  if(r.ok){await loadMeasures();}
-}
+async function updateStatus(mId, status){const r=await fetch(`/api/measures/${mId}/status`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});if(r.ok)await loadMeasures();}
 
-async function selectMeasure(measureId){
-  selectedMeasureId=measureId;
+async function selectMeasure(mId){
+  selectedMeasureId=mId;
   const measures=await fetch(`/api/measures?finding_id=${findingId}`).then(r=>r.json());
-  const m=measures.find(x=>x.id===measureId);
+  const m=measures.find(x=>x.id===mId);
   document.getElementById('logMeasureTitle').textContent=m?m.description.substring(0,80):'';
   document.getElementById('logPanel').style.display='block';
   document.getElementById('emptyLogPanel').style.display='none';
   document.getElementById('logErr').style.display='none';
   document.getElementById('logText').value='';
-  await loadLogs(measureId);
+  document.getElementById('logText').placeholder=t('err.enter_note');
+  await loadLogs(mId);
 }
+function closeLogPanel(){document.getElementById('logPanel').style.display='none';document.getElementById('emptyLogPanel').style.display='block';selectedMeasureId=null;}
 
-function closeLogPanel(){
-  document.getElementById('logPanel').style.display='none';
-  document.getElementById('emptyLogPanel').style.display='block';
-  selectedMeasureId=null;
-}
-
-async function loadLogs(measureId){
-  const logs=await fetch(`/api/measures/${measureId}/logs`).then(r=>r.json());
+async function loadLogs(mId){
+  const logs=await fetch(`/api/measures/${mId}/logs`).then(r=>r.json());
   const el=document.getElementById('logList');
-  if(!logs.length){el.innerHTML='<p style="color:var(--text2);font-size:.82rem;margin-bottom:.5rem">Nessuna nota ancora</p>';return;}
-  el.innerHTML=logs.map(l=>`<div class="log-entry">
-    <div>${escHtml(l.note)}</div>
-    <div class="log-meta">${escHtml(l.author_name||'—')} · ${fmtTs(l.created_at)}</div>
-  </div>`).join('');
+  if(!logs.length){el.innerHTML=`<p style="color:var(--text2);font-size:.82rem;margin-bottom:.5rem">${t('msg.no_logs')}</p>`;return;}
+  el.innerHTML=logs.map(l=>`<div class="log-entry"><div>${escHtml(l.note)}</div><div class="log-meta">${escHtml(l.author_name||'—')} · ${fmtTs(l.created_at)}</div></div>`).join('');
 }
 
 async function addLog(){
   const note=document.getElementById('logText').value.trim();
-  const err=document.getElementById('logErr');
-  err.style.display='none';
-  if(!note){err.textContent='Inserisci una nota';err.style.display='block';return;}
+  const err=document.getElementById('logErr');err.style.display='none';
+  if(!note){err.textContent=t('err.enter_note');err.style.display='block';return;}
   const r=await fetch(`/api/measures/${selectedMeasureId}/logs`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({note})});
   if(r.ok){document.getElementById('logText').value='';await loadLogs(selectedMeasureId);}
-  else{const d=await r.json();err.textContent=d.detail||'Errore';err.style.display='block';}
+  else{const d=await r.json();err.textContent=d.detail||t('err.enter_note');err.style.display='block';}
 }
 
-// --- Measure modal ---
 function openMeasureModal(m=null){
   editingMeasureId=m?m.id:null;
-  document.getElementById('measureModalTitle').textContent=m?'Modifica Misura':'Aggiungi Misura Correttiva';
+  document.getElementById('measureModalTitle').textContent=m?t('btn.edit').replace('✏ ',''):t('section.measures');
   const fv=(id,val)=>document.getElementById(id).value=val||'';
-  fv('m_description',m?.description); fv('m_owner',m?.action_owner_user_id||'');
-  fv('m_owner_name',m?.action_owner_name); fv('m_deadline',m?.deadline);
-  fv('m_status',m?.status||'pending'); fv('m_notes',m?.notes);
+  fv('m_description',m?.description);fv('m_owner',m?.action_owner_user_id||'');
+  fv('m_owner_name',m?.action_owner_name);fv('m_deadline',m?.deadline);
+  fv('m_status',m?.status||'pending');fv('m_notes',m?.notes);
   document.getElementById('measureErr').style.display='none';
   document.getElementById('measureOverlay').classList.add('open');
 }
@@ -372,30 +341,21 @@ function closeMeasureModal(){document.getElementById('measureOverlay').classList
 
 async function saveMeasure(){
   const v=(id)=>document.getElementById(id).value.trim()||null;
-  const err=document.getElementById('measureErr');
-  err.style.display='none';
-  if(!v('m_description')||!v('m_deadline')){err.textContent='Descrizione e scadenza obbligatorie';err.style.display='block';return;}
-  const body={
-    finding_id:parseInt(findingId),
-    description:v('m_description'),
-    action_owner_user_id:v('m_owner')?parseInt(v('m_owner')):null,
-    action_owner_name:v('m_owner_name'),
-    deadline:v('m_deadline'), status:v('m_status')||'pending', notes:v('m_notes')
-  };
+  const err=document.getElementById('measureErr');err.style.display='none';
+  if(!v('m_description')||!v('m_deadline')){err.textContent=t('err.desc_deadline');err.style.display='block';return;}
+  const body={finding_id:parseInt(findingId),description:v('m_description'),action_owner_user_id:v('m_owner')?parseInt(v('m_owner')):null,action_owner_name:v('m_owner_name'),deadline:v('m_deadline'),status:v('m_status')||'pending',notes:v('m_notes')};
   const url=editingMeasureId?`/api/measures/${editingMeasureId}`:'/api/measures';
   const method=editingMeasureId?'PUT':'POST';
   const r=await fetch(url,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
   if(r.ok){closeMeasureModal();await loadMeasures();}
-  else{const d=await r.json();err.textContent=d.detail||'Errore';err.style.display='block';}
+  else{const d=await r.json();err.textContent=d.detail||t('err.desc_deadline');err.style.display='block';}
 }
 
-// --- Finding edit modal ---
 function openFindingEditModal(){
   const f=currentFinding;
   const fv=(id,val)=>document.getElementById(id).value=val||'';
-  fv('fe_ref',f.finding_ref); fv('fe_priority',f.priority); fv('fe_title',f.title);
-  fv('fe_description',f.description); fv('fe_article_ref',f.article_ref);
-  fv('fe_root_cause',f.root_cause); fv('fe_recommendation',f.recommendation);
+  fv('fe_ref',f.finding_ref);fv('fe_priority',f.priority);fv('fe_title',f.title);
+  fv('fe_description',f.description);fv('fe_article_ref',f.article_ref);fv('fe_root_cause',f.root_cause);fv('fe_recommendation',f.recommendation);
   document.getElementById('findingEditErr').style.display='none';
   document.getElementById('findingEditOverlay').classList.add('open');
 }
@@ -403,18 +363,12 @@ function closeFindingEditModal(){document.getElementById('findingEditOverlay').c
 
 async function saveFindingEdit(){
   const v=(id)=>document.getElementById(id).value.trim()||null;
-  const err=document.getElementById('findingEditErr');
-  err.style.display='none';
-  if(!v('fe_ref')||!v('fe_priority')||!v('fe_title')){err.textContent='Ref, priorità e titolo obbligatori';err.style.display='block';return;}
-  const body={
-    audit_id:currentFinding.audit_id,
-    finding_ref:v('fe_ref'), priority:parseInt(v('fe_priority')), title:v('fe_title'),
-    description:v('fe_description'), article_ref:v('fe_article_ref'),
-    root_cause:v('fe_root_cause'), recommendation:v('fe_recommendation')
-  };
+  const err=document.getElementById('findingEditErr');err.style.display='none';
+  if(!v('fe_ref')||!v('fe_priority')||!v('fe_title')){err.textContent=t('err.ref_priority_title');err.style.display='block';return;}
+  const body={audit_id:currentFinding.audit_id,finding_ref:v('fe_ref'),priority:parseInt(v('fe_priority')),title:v('fe_title'),description:v('fe_description'),article_ref:v('fe_article_ref'),root_cause:v('fe_root_cause'),recommendation:v('fe_recommendation')};
   const r=await fetch(`/api/findings/${findingId}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-  if(r.ok){const f=await r.json();currentFinding=f;renderFindingHeader(f,true);closeFindingEditModal();}
-  else{const d=await r.json();err.textContent=d.detail||'Errore';err.style.display='block';}
+  if(r.ok){const f=await r.json();currentFinding=f;const canEdit=currentMe.role==='auditor'||currentMe.is_admin;renderFindingHeader(f,canEdit);closeFindingEditModal();}
+  else{const d=await r.json();err.textContent=d.detail||t('err.ref_priority_title');err.style.display='block';}
 }
 
 document.getElementById('measureOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeMeasureModal();});

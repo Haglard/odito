@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <script>(function(){var t=localStorage.getItem('odito-theme')||'light';document.documentElement.dataset.theme=t;})()</script>
-<title>ODITO — Registrazione</title>
+<script src="/static/i18n.js"></script>
+<title>ODITO — Register</title>
 <style>
-:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3349;--text:#e8eaf6;--text2:#8892b0;--accent:#5c7cfa;--accent2:#4263eb;--danger:#f03e3e;--success:#37b24d}
-[data-theme=light]{--bg:#f0f2f8;--surface:#fff;--surface2:#e8eaf6;--border:#c5cae9;--text:#1a1d27;--text2:#555f7e;--accent:#4263eb;--accent2:#3451d1}
+:root{--bg:#f0f2f8;--surface:#fff;--surface2:#e8eaf6;--border:#c5cae9;--text:#1a1d27;--text2:#555f7e;--accent:#4263eb;--accent2:#3451d1;--danger:#f03e3e;--success:#37b24d}
+[data-theme=dark]{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3349;--text:#e8eaf6;--text2:#8892b0;--accent:#5c7cfa;--accent2:#4263eb}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2.5rem;width:100%;max-width:420px}
@@ -22,35 +23,46 @@ input:focus{border-color:var(--accent)}
 .link a{color:var(--accent);text-decoration:none}
 .err{background:#f03e3e22;border:1px solid var(--danger);color:var(--danger);padding:.7rem 1rem;border-radius:8px;margin-top:1rem;font-size:.85rem;display:none}
 .ok{background:#37b24d22;border:1px solid var(--success);color:var(--success);padding:.7rem 1rem;border-radius:8px;margin-top:1rem;font-size:.85rem;display:none}
+.top-bar{position:fixed;top:.75rem;right:1rem;display:flex;gap:.5rem;align-items:center}
+.theme-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:.3rem .55rem;border-radius:6px;cursor:pointer;font-size:.82rem}
 </style>
 </head>
 <body>
+<div class="top-bar">
+  <div class="lang-switcher">
+    <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" data-lang="it" onclick="setLang('it')">IT</button>
+    <button class="lang-btn" data-lang="el" onclick="setLang('el')">EL</button>
+  </div>
+  <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+</div>
 <div class="card">
   <div class="logo">ODITO<br><span>Audit Management System</span></div>
-  <h2>Crea il tuo account</h2>
-  <label>Nome completo</label>
+  <h2 data-i18n="register.title">Create your account</h2>
+  <label data-i18n="register.name">Full name</label>
   <input type="text" id="name" placeholder="Mario Rossi">
-  <label>Email</label>
+  <label data-i18n="label.email">Email</label>
   <input type="email" id="email" placeholder="nome@azienda.com">
-  <label>Password</label>
+  <label data-i18n="label.password">Password</label>
   <input type="password" id="password" placeholder="••••••••">
   <div class="err" id="err"></div>
   <div class="ok" id="ok"></div>
-  <button class="btn" onclick="doRegister()">Create Account</button>
-  <div class="link">Already have an account? <a href="/login">Sign In</a></div>
+  <button class="btn" onclick="doRegister()" data-i18n="btn.create_account">Create Account</button>
+  <div class="link"><span data-i18n="register.have_account">Already have an account?</span> <a href="/login" data-i18n="register.login_link">Sign In</a></div>
 </div>
 <script>
+function toggleTheme(){const t=document.documentElement.dataset.theme==='light'?'dark':'light';document.documentElement.dataset.theme=t;localStorage.setItem('odito-theme',t);}
 async function doRegister(){
   const name=document.getElementById('name').value.trim();
   const email=document.getElementById('email').value.trim();
   const password=document.getElementById('password').value;
-  const err=document.getElementById('err');
-  const ok=document.getElementById('ok');
+  const err=document.getElementById('err'), ok=document.getElementById('ok');
   err.style.display='none'; ok.style.display='none';
-  if(!name||!email||!password){err.textContent='Compila tutti i campi';err.style.display='block';return;}
+  if(!name||!email||!password){err.textContent=t('err.all_fields');err.style.display='block';return;}
   const r=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password})});
-  if(r.ok){ok.textContent='Account creato! Reindirizzamento...';ok.style.display='block';setTimeout(()=>window.location.href='/login',1200);}
-  else{const d=await r.json();err.textContent=d.detail||'Errore registrazione';err.style.display='block';}
+  if(r.ok){ok.textContent='✓';ok.style.display='block';setTimeout(()=>window.location.href='/login',1200);}
+  else{const d=await r.json();err.textContent=d.detail||t('err.all_fields');err.style.display='block';}
 }
+applyTranslations();
 </script>
 </body></html>

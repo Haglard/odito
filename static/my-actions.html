@@ -3,16 +3,17 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <script>(function(){var t=localStorage.getItem('odito-theme')||'light';document.documentElement.dataset.theme=t;})()</script>
-<title>ODITO — Le mie azioni</title>
+<script src="/static/i18n.js"></script>
+<title>ODITO — My Actions</title>
 <style>
-:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3349;--text:#e8eaf6;--text2:#8892b0;--accent:#5c7cfa;--accent2:#4263eb;--danger:#f03e3e;--success:#37b24d;--warn:#f59f00;--info:#1c7ed6;
+:root{--bg:#f0f2f8;--surface:#fff;--surface2:#e8eaf6;--border:#c5cae9;--text:#1a1d27;--text2:#555f7e;--accent:#4263eb;--accent2:#3451d1;--danger:#f03e3e;--success:#37b24d;--warn:#f59f00;--info:#1c7ed6;
 --p1:#f03e3e;--p2:#f59f00;--p3:#1c7ed6;--p4:#37b24d}
-[data-theme=light]{--bg:#f0f2f8;--surface:#fff;--surface2:#e8eaf6;--border:#c5cae9;--text:#1a1d27;--text2:#555f7e;--accent:#4263eb;--accent2:#3451d1}
+[data-theme=dark]{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3349;--text:#e8eaf6;--text2:#8892b0;--accent:#5c7cfa;--accent2:#4263eb}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif}
 nav{background:var(--surface);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:100}
 .nav-logo{font-size:1.3rem;font-weight:800;color:var(--accent);text-decoration:none;margin-right:auto}
-.nav-link{color:var(--text2);text-decoration:none;font-size:.9rem;padding:.4rem .75rem;border-radius:6px}
+.nav-link{color:var(--text2);text-decoration:none;font-size:.9rem;padding:.4rem .75rem;border-radius:6px;transition:background .2s}
 .nav-link.active,.nav-link:hover{background:var(--surface2);color:var(--text)}
 .nav-btn{padding:.4rem .9rem;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:.85rem;cursor:pointer;text-decoration:none}
 .theme-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:.4rem .7rem;border-radius:6px;cursor:pointer;font-size:.85rem}
@@ -32,7 +33,6 @@ h1{font-size:1.5rem;margin-bottom:.25rem}
 .badge.in_progress{background:#f59f0022;color:var(--warn)}
 .badge.completed{background:#37b24d22;color:var(--success)}
 .badge.overdue{background:#f03e3e22;color:var(--danger)}
-/* MEASURE CARD */
 .measure-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.4rem;margin-bottom:1.1rem;transition:border-color .2s}
 .measure-card.expanded{border-color:var(--accent)}
 .measure-card-top{display:flex;align-items:flex-start;gap:.75rem;cursor:pointer}
@@ -45,7 +45,6 @@ h1{font-size:1.5rem;margin-bottom:.25rem}
 .expand-body{margin-top:1rem;border-top:1px solid var(--border);padding-top:1rem;display:none}
 .measure-card.expanded .expand-body{display:block}
 .expand-desc{font-size:.85rem;color:var(--text2);line-height:1.6;margin-bottom:1rem;white-space:pre-wrap}
-/* STATUS UPDATE */
 .status-row{display:flex;align-items:center;gap:.65rem;margin-bottom:1rem;flex-wrap:wrap}
 .status-row label{font-size:.8rem;color:var(--text2)}
 .status-row select{padding:.35rem .7rem;font-size:.8rem;border-radius:6px;background:var(--surface2);border:1px solid var(--border);color:var(--text);outline:none;cursor:pointer}
@@ -53,7 +52,6 @@ h1{font-size:1.5rem;margin-bottom:.25rem}
 .btn-sm{padding:.38rem .85rem;font-size:.8rem}
 .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent2)}
 .btn-ghost{background:var(--surface2);color:var(--text2)}.btn-ghost:hover{background:var(--border)}
-/* LOG */
 .log-section{margin-top:.5rem}
 .log-section-title{font-size:.78rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.65rem}
 .log-entry{padding:.55rem 0;border-bottom:1px solid var(--border);font-size:.83rem}
@@ -69,62 +67,83 @@ h1{font-size:1.5rem;margin-bottom:.25rem}
 <body>
 <nav>
   <a class="nav-logo" href="/">ODITO</a>
-  <a class="nav-link" href="/">Dashboard</a>
-  <a class="nav-link active" href="/my-actions">Le mie azioni</a>
+  <a class="nav-link" href="/" id="navDashboard">Dashboard</a>
+  <a class="nav-link active" href="/my-actions" id="navActions">My Actions</a>
   <a class="nav-link" href="/admin" id="navAdmin" style="display:none">Admin</a>
+  <div class="lang-switcher">
+    <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" data-lang="it" onclick="setLang('it')">IT</button>
+    <button class="lang-btn" data-lang="el" onclick="setLang('el')">EL</button>
+  </div>
   <button class="theme-btn" onclick="toggleTheme()">🌓</button>
   <a class="nav-btn" href="#" id="navUser" onclick="logout()">Log Out</a>
 </nav>
 
 <main>
-  <h1>Le mie azioni</h1>
-  <p class="subtitle" id="subtitle">Misure correttive a te assegnate</p>
+  <h1 id="pageTitle">My Actions</h1>
+  <p class="subtitle" id="subtitle"></p>
 
   <div class="filter-row">
-    <label>Stato:</label>
+    <label id="lblFilterStatus"></label>
     <select id="filterStatus" onchange="applyFilter()">
-      <option value="">Tutti</option>
-      <option value="pending">Pending</option>
-      <option value="in_progress">In Progress</option>
-      <option value="completed">Completate</option>
-      <option value="overdue">Scadute</option>
+      <option value="" data-i18n="filter.all_status">All</option>
+      <option value="pending" data-i18n="status.pending">Pending</option>
+      <option value="in_progress" data-i18n="status.in_progress">In Progress</option>
+      <option value="completed" data-i18n="status.completed">Completed</option>
+      <option value="overdue" data-i18n="status.overdue">Overdue</option>
     </select>
-    <label>Priorità:</label>
+    <label id="lblFilterPriority"></label>
     <select id="filterPriority" onchange="applyFilter()">
-      <option value="">Tutte</option>
-      <option value="1">High (P1)</option>
-      <option value="2">Relevant (P2)</option>
-      <option value="3">Medium (P3)</option>
-      <option value="4">Low (P4)</option>
+      <option value="" data-i18n="filter.all_priority">All</option>
+      <option value="1" data-i18n="priority.1">High</option>
+      <option value="2" data-i18n="priority.2">Relevant</option>
+      <option value="3" data-i18n="priority.3">Medium</option>
+      <option value="4" data-i18n="priority.4">Low</option>
     </select>
   </div>
 
-  <div id="actionList"><p style="color:var(--text2);font-size:.9rem">Caricamento...</p></div>
+  <div id="actionList"><p style="color:var(--text2);font-size:.9rem" id="loadingMsg"></p></div>
 </main>
 
 <script>
-const PRIORITY={1:{label:'High',cls:'p1'},2:{label:'Relevant',cls:'p2'},3:{label:'Medium',cls:'p3'},4:{label:'Low',cls:'p4'}};
-const STATUS_LABELS={pending:'Pending',in_progress:'In Progress',completed:'Completed'};
 let allMeasures=[], currentMe=null;
 
-function toggleTheme(){const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;localStorage.setItem('odito-theme',t);}
+function toggleTheme(){const th=document.documentElement.dataset.theme==='light'?'dark':'light';document.documentElement.dataset.theme=th;localStorage.setItem('odito-theme',th);}
 async function logout(){await fetch('/api/auth/logout',{method:'POST'});window.location.href='/login';}
-function fmtDate(s){if(!s)return'—';return new Date(s+'T00:00:00').toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});}
-function fmtTs(s){if(!s)return'—';return new Date(s).toLocaleString('it-IT',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}
+function fmtDate(s){if(!s)return'—';return new Date(s+'T00:00:00').toLocaleDateString(undefined,{day:'2-digit',month:'short',year:'numeric'});}
+function fmtTs(s){if(!s)return'—';return new Date(s).toLocaleString(undefined,{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}
 function escHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function isOverdue(d){if(!d)return false;return new Date(d+'T00:00:00')<new Date();}
+
+function applyPageLabels(){
+  document.getElementById('pageTitle').textContent=t('page.my_actions');
+  if(currentMe) document.getElementById('subtitle').textContent=`${t('greeting')}, ${currentMe.name}`;
+  document.getElementById('lblFilterStatus').textContent=t('filter.status');
+  document.getElementById('lblFilterPriority').textContent=t('filter.priority');
+  const lm=document.getElementById('loadingMsg');
+  if(lm) lm.textContent=t('msg.loading');
+}
+
+function renderPage(){
+  applyNavLinks();
+  applyPageLabels();
+  applyTranslations();
+  if(window._measuresLoaded) applyFilter();
+}
 
 async function init(){
   const me=await fetch('/api/auth/me').then(r=>r.json());
   if(!me.authenticated){window.location.href='/login';return;}
   currentMe=me;
-  const roleLabel={'auditor':'Auditor','operational':'Operational'}[me.role]||me.role;
-  const displayRole=me.is_admin?'Admin':roleLabel;
-  document.getElementById('navUser').textContent=`${me.name} (${displayRole}) — Log Out`;
+  window._meData=me;
+  setNavUser(me);
+  applyNavLinks();
   if(me.is_admin) document.getElementById('navAdmin').style.display='';
-  document.getElementById('subtitle').textContent=`Misure correttive assegnate a ${me.name}`;
+  applyPageLabels();
+  document.getElementById('subtitle').textContent=`${t('greeting')}, ${me.name}`;
 
   allMeasures=await fetch('/api/my-actions').then(r=>r.json());
+  window._measuresLoaded=true;
   applyFilter();
 }
 
@@ -143,19 +162,19 @@ function applyFilter(){
 
 function renderMeasures(measures){
   const el=document.getElementById('actionList');
-  if(!measures.length){el.innerHTML='<div class="empty-state">Nessuna azione trovata</div>';return;}
+  if(!measures.length){el.innerHTML=`<div class="empty-state">${t('msg.no_actions')}</div>`;return;}
   el.innerHTML=measures.map(m=>{
-    const p=PRIORITY[m.priority]||{label:'—',cls:'p3'};
+    const pCls=`p${m.priority||3}`, pLbl=t(`priority.${m.priority||3}`);
     const od=isOverdue(m.deadline)&&m.status!=='completed';
     const stCls=od?'overdue':m.status;
-    const stLbl=od?'Scaduta':STATUS_LABELS[m.status]||m.status;
+    const stLbl=od?t('status.overdue'):t(`status.${m.status}`)||m.status;
     const dateClass=od?'overdue-date':'';
     return `<div class="measure-card" id="mc-${m.id}">
       <div class="measure-card-top" onclick="toggleExpand(${m.id})">
         <div style="flex:1">
           <div class="mc-title">${escHtml(m.description)}</div>
           <div class="mc-meta">
-            <span class="${dateClass}">📅 Scadenza: ${fmtDate(m.deadline)}</span>
+            <span class="${dateClass}">📅 ${fmtDate(m.deadline)}</span>
           </div>
           <div class="mc-audit-ref">
             <a href="/finding/${m.finding_id}" onclick="event.stopPropagation()" style="color:var(--accent);text-decoration:none">
@@ -164,26 +183,26 @@ function renderMeasures(measures){
           </div>
         </div>
         <div class="mc-badges">
-          <span class="badge ${p.cls}">${p.label}</span>
+          <span class="badge ${pCls}">${pLbl}</span>
           <span class="badge ${stCls}">${stLbl}</span>
         </div>
       </div>
       <div class="expand-body">
         ${m.description?`<div class="expand-desc">${escHtml(m.description)}</div>`:''}
         <div class="status-row">
-          <label>Aggiorna stato:</label>
+          <label>${t('btn.update_status')}</label>
           <select onchange="updateStatus(${m.id}, this.value)">
-            <option value="pending" ${m.status==='pending'?'selected':''}>Pending</option>
-            <option value="in_progress" ${m.status==='in_progress'?'selected':''}>In Progress</option>
-            <option value="completed" ${m.status==='completed'?'selected':''}>Completed</option>
+            <option value="pending" ${m.status==='pending'?'selected':''}>${t('status.pending')}</option>
+            <option value="in_progress" ${m.status==='in_progress'?'selected':''}>${t('status.in_progress')}</option>
+            <option value="completed" ${m.status==='completed'?'selected':''}>${t('status.completed')}</option>
           </select>
         </div>
         <div class="log-section">
-          <div class="log-section-title">Log di remediation</div>
-          <div id="log-${m.id}"><span style="color:var(--text2);font-size:.82rem">Caricamento...</span></div>
+          <div class="log-section-title">${t('section.log')}</div>
+          <div id="log-${m.id}"><span style="color:var(--text2);font-size:.82rem">${t('msg.loading')}</span></div>
           <div class="log-add">
-            <textarea id="logtxt-${m.id}" placeholder="Aggiungi nota di avanzamento..."></textarea>
-            <button class="btn btn-primary btn-sm" onclick="addLog(${m.id})">Send</button>
+            <textarea id="logtxt-${m.id}" placeholder="${escHtml(t('err.enter_note'))}"></textarea>
+            <button class="btn btn-primary btn-sm" onclick="addLog(${m.id})">${t('btn.send')}</button>
           </div>
           <div class="err-inline" id="logerr-${m.id}"></div>
         </div>
@@ -195,7 +214,6 @@ function renderMeasures(measures){
 async function toggleExpand(id){
   const card=document.getElementById(`mc-${id}`);
   const wasExpanded=card.classList.contains('expanded');
-  // collapse all
   document.querySelectorAll('.measure-card.expanded').forEach(c=>c.classList.remove('expanded'));
   if(!wasExpanded){
     card.classList.add('expanded');
@@ -215,7 +233,7 @@ async function loadLogs(measureId){
   const logs=await fetch(`/api/measures/${measureId}/logs`).then(r=>r.json());
   const el=document.getElementById(`log-${measureId}`);
   if(!el) return;
-  if(!logs.length){el.innerHTML='<p style="color:var(--text2);font-size:.8rem;margin-bottom:.4rem">Nessuna nota</p>';return;}
+  if(!logs.length){el.innerHTML=`<p style="color:var(--text2);font-size:.8rem;margin-bottom:.4rem">${t('msg.no_logs')}</p>`;return;}
   el.innerHTML=logs.map(l=>`<div class="log-entry">
     <div>${escHtml(l.note)}</div>
     <div class="log-meta">${escHtml(l.author_name||'—')} · ${fmtTs(l.created_at)}</div>
@@ -227,12 +245,13 @@ async function addLog(measureId){
   const errEl=document.getElementById(`logerr-${measureId}`);
   errEl.style.display='none';
   const note=txt.value.trim();
-  if(!note){errEl.textContent='Inserisci una nota';errEl.style.display='block';return;}
+  if(!note){errEl.textContent=t('err.enter_note');errEl.style.display='block';return;}
   const r=await fetch(`/api/measures/${measureId}/logs`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({note})});
   if(r.ok){txt.value='';await loadLogs(measureId);}
-  else{const d=await r.json();errEl.textContent=d.detail||'Errore';errEl.style.display='block';}
+  else{const d=await r.json();errEl.textContent=d.detail||t('err.all_fields');errEl.style.display='block';}
 }
 
+applyTranslations();
 init();
 </script>
 </body></html>

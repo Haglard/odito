@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <script>(function(){var t=localStorage.getItem('odito-theme')||'light';document.documentElement.dataset.theme=t;})()</script>
+<script src="/static/i18n.js"></script>
 <title>ODITO — Audit</title>
 <style>
-:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3349;--text:#e8eaf6;--text2:#8892b0;--accent:#5c7cfa;--accent2:#4263eb;--danger:#f03e3e;--success:#37b24d;--warn:#f59f00;--info:#1c7ed6;
---p1:#f03e3e;--p2:#f59f00;--p3:#1c7ed6;--p4:#37b24d}
-[data-theme=light]{--bg:#f0f2f8;--surface:#fff;--surface2:#e8eaf6;--border:#c5cae9;--text:#1a1d27;--text2:#555f7e;--accent:#4263eb;--accent2:#3451d1}
+:root{--bg:#f0f2f8;--surface:#fff;--surface2:#e8eaf6;--border:#c5cae9;--text:#1a1d27;--text2:#555f7e;--accent:#4263eb;--accent2:#3451d1;--danger:#f03e3e;--success:#37b24d;--warn:#f59f00;--p1:#f03e3e;--p2:#f59f00;--p3:#1c7ed6;--p4:#37b24d}
+[data-theme=dark]{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3349;--text:#e8eaf6;--text2:#8892b0;--accent:#5c7cfa;--accent2:#4263eb}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif}
 nav{background:var(--surface);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:100}
@@ -17,42 +17,31 @@ nav{background:var(--surface);border-bottom:1px solid var(--border);padding:.75r
 .nav-btn{padding:.4rem .9rem;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:.85rem;cursor:pointer;text-decoration:none}
 .theme-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:.4rem .7rem;border-radius:6px;cursor:pointer;font-size:.85rem}
 main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
-/* HEADER AUDIT */
 .audit-header{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.75rem;margin-bottom:1.5rem}
 .audit-header-top{display:flex;align-items:flex-start;gap:1rem;margin-bottom:1.25rem}
 .audit-ref-big{font-size:.8rem;font-family:monospace;color:var(--text2);background:var(--surface2);padding:.3rem .6rem;border-radius:4px}
 .audit-title-big{font-size:1.5rem;font-weight:700;flex:1}
 .badge{display:inline-block;padding:.25rem .65rem;border-radius:20px;font-size:.72rem;font-weight:700;letter-spacing:.3px}
-.badge.p1{background:#f03e3e22;color:var(--p1)}
-.badge.p2{background:#f59f0022;color:var(--p2)}
-.badge.p3{background:#1c7ed622;color:var(--p3)}
-.badge.p4{background:#37b24d22;color:var(--p4)}
-.badge.open{background:#5c7cfa22;color:var(--accent)}
-.badge.closed{background:#37b24d22;color:var(--success)}
-.badge.satisfactory{background:#37b24d22;color:var(--success)}
-.badge.unsatisfactory{background:#f03e3e22;color:var(--danger)}
-.badge.poor{background:#f03e3e33;color:var(--danger)}
-.badge.good{background:#37b24d22;color:var(--success)}
+.badge.p1{background:#f03e3e22;color:var(--p1)}.badge.p2{background:#f59f0022;color:var(--p2)}
+.badge.p3{background:#1c7ed622;color:var(--p3)}.badge.p4{background:#37b24d22;color:var(--p4)}
+.badge.open{background:#5c7cfa22;color:var(--accent)}.badge.closed{background:#37b24d22;color:var(--success)}
+.badge.good{background:#37b24d22;color:var(--success)}.badge.satisfactory{background:#37b24d22;color:var(--success)}
+.badge.unsatisfactory{background:#f03e3e22;color:var(--danger)}.badge.poor{background:#f03e3e33;color:var(--danger)}
 .meta-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem 1.5rem}
-.meta-item{font-size:.85rem}
 .meta-item .key{color:var(--text2);font-size:.75rem;margin-bottom:.2rem}
-.meta-item .val{color:var(--text)}
+.meta-item .val{font-size:.85rem}
 .section-divider{border:none;border-top:1px solid var(--border);margin:1.25rem 0}
 .background-block{font-size:.88rem;color:var(--text2);line-height:1.7;white-space:pre-wrap}
-/* TABS */
 .tabs{display:flex;gap:.5rem;margin-bottom:1.5rem;border-bottom:1px solid var(--border);padding-bottom:0}
 .tab{padding:.6rem 1.25rem;font-size:.9rem;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .2s}
-.tab:hover{color:var(--text)}
-.tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.tab:hover{color:var(--text)}.tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
 .tab-content{display:none}.tab-content.active{display:block}
-/* FINDINGS */
 .findings-toolbar{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
 .findings-toolbar h2{font-size:1rem;font-weight:600;flex:1}
 .btn{padding:.6rem 1.4rem;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer;transition:background .2s}
 .btn-sm{padding:.4rem 1rem;font-size:.8rem}
 .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent2)}
 .btn-ghost{background:var(--surface2);color:var(--text2)}.btn-ghost:hover{background:var(--border)}
-.btn-danger{background:#f03e3e22;color:var(--danger);border:1px solid var(--danger)}.btn-danger:hover{background:#f03e3e33}
 .finding-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1rem;cursor:pointer;transition:border-color .2s}
 .finding-card:hover{border-color:var(--accent)}
 .finding-card-top{display:flex;align-items:flex-start;gap:.75rem;margin-bottom:.5rem}
@@ -61,7 +50,6 @@ main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
 .finding-meta{font-size:.78rem;color:var(--text2);display:flex;gap:1rem;flex-wrap:wrap}
 .finding-desc{font-size:.83rem;color:var(--text2);margin-top:.5rem;line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .empty-state{text-align:center;padding:3rem;color:var(--text2);font-size:.9rem}
-/* EDIT FORM */
 .edit-section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.75rem;margin-bottom:1.5rem}
 .section-title{font-size:1rem;font-weight:600;margin-bottom:1.25rem;color:var(--accent);border-bottom:1px solid var(--border);padding-bottom:.6rem}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
@@ -72,7 +60,6 @@ input,select,textarea{width:100%;padding:.65rem .9rem;background:var(--surface2)
 input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 textarea{resize:vertical;min-height:80px}
 select option{background:var(--surface)}
-/* MODAL */
 .overlay{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;z-index:200;display:none}
 .overlay.open{display:flex}
 .modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem;width:100%;max-width:680px;max-height:90vh;overflow-y:auto}
@@ -84,212 +71,227 @@ select option{background:var(--surface)}
 <body>
 <nav>
   <a class="nav-logo" href="/">ODITO</a>
-  <a class="nav-link" href="/">Dashboard</a>
-  <a class="nav-link" href="/my-actions" id="navActions" style="display:none">Le mie azioni</a>
+  <a class="nav-link" href="/" id="navDashboard">Dashboard</a>
+  <a class="nav-link" href="/my-actions" id="navActions" style="display:none">My Actions</a>
   <a class="nav-link" href="/admin" id="navAdmin" style="display:none">Admin</a>
+  <div class="lang-switcher">
+    <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" data-lang="it" onclick="setLang('it')">IT</button>
+    <button class="lang-btn" data-lang="el" onclick="setLang('el')">EL</button>
+  </div>
   <button class="theme-btn" onclick="toggleTheme()">🌓</button>
   <a class="nav-btn" href="#" id="navUser" onclick="logout()">Log Out</a>
 </nav>
 
 <main>
-  <div id="auditHeader">
-    <p style="color:var(--text2);font-size:.9rem">Caricamento...</p>
-  </div>
-
+  <div id="auditHeader"><p style="color:var(--text2);font-size:.9rem" id="loadingMsg"></p></div>
   <div class="tabs" id="tabBar" style="display:none">
-    <div class="tab active" onclick="switchTab('findings')">Non Conformità</div>
-    <div class="tab" onclick="switchTab('edit')" id="tabEdit" style="display:none">Modifica Report</div>
+    <div class="tab active" id="tabFindings" onclick="switchTab('findings')">Non-Conformities</div>
+    <div class="tab" id="tabEdit" onclick="switchTab('edit')" style="display:none">Edit Report</div>
   </div>
-
   <div class="tab-content active" id="tab-findings">
     <div class="findings-toolbar">
-      <h2 id="findingsCount">Non conformità</h2>
+      <h2 id="findingsCount"></h2>
       <button class="btn btn-primary btn-sm" id="btnAddFinding" style="display:none" onclick="openFindingModal()">+ Add</button>
     </div>
-    <div id="findingList"><p style="color:var(--text2);font-size:.9rem">Caricamento...</p></div>
+    <div id="findingList"></div>
   </div>
-
   <div class="tab-content" id="tab-edit">
     <div class="edit-section">
-      <div class="section-title">Intestazione Report</div>
+      <div class="section-title" id="es1"></div>
       <div class="grid2">
-        <div class="field"><label>Codice Report *</label><input id="e_report_ref"></div>
-        <div class="field"><label>Titolo *</label><input id="e_title"></div>
-        <div class="field"><label>Entità Auditata</label><input id="e_audited_entity"></div>
-        <div class="field"><label>Tipo Audit</label><input id="e_audit_type"></div>
-        <div class="field"><label>Classe Audit</label><input id="e_audit_class"></div>
-        <div class="field"><label>Risultato Complessivo</label>
-          <select id="e_overall_result">
-            <option value="">— seleziona —</option>
-            <option>Good</option><option>Satisfactory</option>
-            <option>Unsatisfactory</option><option>Poor</option>
+        <div class="field"><label id="lRRef"></label><input id="e_report_ref"></div>
+        <div class="field"><label id="lTitle"></label><input id="e_title"></div>
+        <div class="field"><label id="lEntity"></label><input id="e_audited_entity"></div>
+        <div class="field"><label id="lAType"></label><input id="e_audit_type"></div>
+        <div class="field"><label id="lAClass"></label><input id="e_audit_class"></div>
+        <div class="field"><label id="lOResult"></label>
+          <select id="e_overall_result"><option value="" id="eSel"></option>
+            <option>Good</option><option>Satisfactory</option><option>Unsatisfactory</option><option>Poor</option>
           </select>
         </div>
-        <div class="field"><label>Risultato Precedente</label><input id="e_previous_result"></div>
-        <div class="field"><label>Data Risultato Precedente</label><input id="e_previous_result_date" type="date"></div>
-        <div class="field"><label>Data Emissione</label><input id="e_issue_date" type="date"></div>
+        <div class="field"><label id="lPResult"></label><input id="e_previous_result"></div>
+        <div class="field"><label id="lPRDate"></label><input id="e_previous_result_date" type="date"></div>
+        <div class="field"><label id="lIDate"></label><input id="e_issue_date" type="date"></div>
       </div>
     </div>
     <div class="edit-section">
-      <div class="section-title">Periodi</div>
+      <div class="section-title" id="es2"></div>
       <div class="grid2">
-        <div class="field"><label>Periodo Campione — Da</label><input id="e_sample_from" type="date"></div>
-        <div class="field"><label>Periodo Campione — A</label><input id="e_sample_to" type="date"></div>
-        <div class="field"><label>Periodo Fieldwork — Da</label><input id="e_field_from" type="date"></div>
-        <div class="field"><label>Periodo Fieldwork — A</label><input id="e_field_to" type="date"></div>
+        <div class="field"><label id="lSFrom"></label><input id="e_sample_from" type="date"></div>
+        <div class="field"><label id="lSTo"></label><input id="e_sample_to" type="date"></div>
+        <div class="field"><label id="lFFrom"></label><input id="e_field_from" type="date"></div>
+        <div class="field"><label id="lFTo"></label><input id="e_field_to" type="date"></div>
       </div>
     </div>
     <div class="edit-section">
-      <div class="section-title">Team di Audit</div>
+      <div class="section-title" id="es3"></div>
       <div class="grid2">
-        <div class="field"><label>Chief Audit Executive</label><input id="e_cae"></div>
-        <div class="field"><label>Audit Team Manager</label><input id="e_team_manager"></div>
-        <div class="field"><label>Audit Team</label><input id="e_team"></div>
-        <div class="field"><label>Data Exit Meeting</label><input id="e_exit_date" type="date"></div>
+        <div class="field"><label id="lCAE"></label><input id="e_cae"></div>
+        <div class="field"><label id="lTM"></label><input id="e_team_manager"></div>
+        <div class="field"><label id="lTeam"></label><input id="e_team"></div>
+        <div class="field"><label id="lExDate"></label><input id="e_exit_date" type="date"></div>
       </div>
-      <div class="field"><label>Partecipanti Exit Meeting</label><textarea id="e_exit_participants"></textarea></div>
+      <div class="field"><label id="lExPart"></label><textarea id="e_exit_participants"></textarea></div>
     </div>
     <div class="edit-section">
-      <div class="section-title">Background / Scope</div>
+      <div class="section-title" id="es4"></div>
       <div class="field"><textarea id="e_background" style="min-height:140px"></textarea></div>
     </div>
     <div class="err" id="editErr"></div>
     <div style="display:flex;gap:1rem;margin-bottom:2rem">
-      <button class="btn btn-primary" onclick="saveEdit()">Save Changes</button>
-      <button class="btn btn-ghost" onclick="switchTab('findings')">Cancel</button>
+      <button class="btn btn-primary" id="btnSaveEdit" onclick="saveEdit()">Save Changes</button>
+      <button class="btn btn-ghost" id="btnCancelEdit" onclick="switchTab('findings')">Cancel</button>
     </div>
   </div>
 </main>
 
-<!-- MODAL: Aggiungi/Modifica Finding -->
 <div class="overlay" id="findingOverlay">
   <div class="modal">
-    <div class="modal-title" id="findingModalTitle">Aggiungi Non Conformità</div>
+    <div class="modal-title" id="findingModalTitle"></div>
     <div class="grid2">
-      <div class="field"><label>Numero / Ref *</label><input id="f_ref" placeholder="es. NC-001"></div>
-      <div class="field"><label>Priorità *</label>
-        <select id="f_priority">
-          <option value="">— seleziona —</option>
-          <option value="1">High (P1)</option>
-          <option value="2">Relevant (P2)</option>
-          <option value="3">Medium (P3)</option>
-          <option value="4">Low (P4)</option>
+      <div class="field"><label id="mFRef"></label><input id="f_ref"></div>
+      <div class="field"><label id="mFPri"></label>
+        <select id="f_priority"><option value="" id="mfSel"></option>
+          <option value="1" id="mfP1"></option><option value="2" id="mfP2"></option>
+          <option value="3" id="mfP3"></option><option value="4" id="mfP4"></option>
         </select>
       </div>
     </div>
-    <div class="field"><label>Titolo *</label><input id="f_title" placeholder="Breve titolo della non conformità"></div>
-    <div class="field"><label>Descrizione</label><textarea id="f_description" style="min-height:100px" placeholder="Descrizione dettagliata..."></textarea></div>
-    <div class="field"><label>Articolo di Riferimento / Normativa</label><input id="f_article_ref" placeholder="es. DORA Art. 9.4"></div>
-    <div class="field"><label>Root Cause</label><textarea id="f_root_cause" style="min-height:80px"></textarea></div>
-    <div class="field"><label>Raccomandazione</label><textarea id="f_recommendation" style="min-height:80px"></textarea></div>
+    <div class="field"><label id="mFTitle"></label><input id="f_title"></div>
+    <div class="field"><label id="mFDesc"></label><textarea id="f_description" style="min-height:100px"></textarea></div>
+    <div class="field"><label id="mFARef"></label><input id="f_article_ref"></div>
+    <div class="field"><label id="mFRC"></label><textarea id="f_root_cause" style="min-height:80px"></textarea></div>
+    <div class="field"><label id="mFRec"></label><textarea id="f_recommendation" style="min-height:80px"></textarea></div>
     <div class="err" id="findingErr"></div>
     <div class="modal-actions">
-      <button class="btn btn-ghost btn-sm" onclick="closeFindingModal()">Cancel</button>
-      <button class="btn btn-primary btn-sm" onclick="saveFinding()">Save</button>
+      <button class="btn btn-ghost btn-sm" id="btnFCancel" onclick="closeFindingModal()">Cancel</button>
+      <button class="btn btn-primary btn-sm" id="btnFSave" onclick="saveFinding()">Save</button>
     </div>
   </div>
 </div>
 
 <script>
-const PRIORITY={1:{label:'High',cls:'p1'},2:{label:'Relevant',cls:'p2'},3:{label:'Medium',cls:'p3'},4:{label:'Low',cls:'p4'}};
 const RESULT_CLS={'Good':'good','Satisfactory':'satisfactory','Unsatisfactory':'unsatisfactory','Poor':'poor'};
 const auditId=location.pathname.split('/').pop();
 let currentAudit=null, currentMe=null, editingFindingId=null;
 
-function toggleTheme(){const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;localStorage.setItem('odito-theme',t);}
+function toggleTheme(){const th=document.documentElement.dataset.theme==='light'?'dark':'light';document.documentElement.dataset.theme=th;localStorage.setItem('odito-theme',th);}
 async function logout(){await fetch('/api/auth/logout',{method:'POST'});window.location.href='/login';}
-function fmtDate(s){if(!s)return'—';return new Date(s+'T00:00:00').toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});}
+function fmtDate(s){if(!s)return'—';return new Date(s+'T00:00:00').toLocaleDateString(undefined,{day:'2-digit',month:'short',year:'numeric'});}
+function escHtml(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function applyPageLabels(){
+  applyNavLinks();
+  document.getElementById('tabFindings').textContent=t('tab.findings');
+  document.getElementById('tabEdit').textContent=t('tab.edit');
+  document.getElementById('btnAddFinding').textContent=t('btn.add');
+  document.getElementById('btnSaveEdit').textContent=t('btn.save_changes');
+  document.getElementById('btnCancelEdit').textContent=t('btn.cancel');
+  document.getElementById('btnFCancel').textContent=t('btn.cancel');
+  document.getElementById('btnFSave').textContent=t('btn.save');
+  document.getElementById('loadingMsg').textContent=t('msg.loading');
+  document.getElementById('es1').textContent=t('section.report_header');
+  document.getElementById('es2').textContent=t('section.periods');
+  document.getElementById('es3').textContent=t('section.audit_team');
+  document.getElementById('es4').textContent=t('section.background');
+  document.getElementById('eSel').textContent=t('select.choose');
+  document.getElementById('mfSel').textContent=t('select.choose');
+  document.getElementById('mfP1').textContent=t('priority.1');
+  document.getElementById('mfP2').textContent=t('priority.2');
+  document.getElementById('mfP3').textContent=t('priority.3');
+  document.getElementById('mfP4').textContent=t('priority.4');
+  ['lRRef','label.report_ref'],['lTitle','label.title'],['lEntity','label.audited_entity'],
+  ['lAType','label.audit_type'],['lAClass','label.audit_class'],['lOResult','label.overall_result'],
+  ['lPResult','label.previous_result'],['lPRDate','label.previous_result_date'],['lIDate','label.issue_date'],
+  ['lSFrom','label.sample_from'],['lSTo','label.sample_to'],['lFFrom','label.field_from'],['lFTo','label.field_to'],
+  ['lCAE','label.cae'],['lTM','label.team_manager'],['lTeam','label.team'],['lExDate','label.exit_date'],['lExPart','label.exit_participants'],
+  ['mFRef','label.finding_ref'],['mFPri','label.priority'],['mFTitle','label.title'],
+  ['mFDesc','label.description'],['mFARef','label.article_ref'],['mFRC','label.root_cause'],['mFRec','label.recommendation']
+  ;
+  [['lRRef','label.report_ref'],['lTitle','label.title'],['lEntity','label.audited_entity'],
+  ['lAType','label.audit_type'],['lAClass','label.audit_class'],['lOResult','label.overall_result'],
+  ['lPResult','label.previous_result'],['lPRDate','label.previous_result_date'],['lIDate','label.issue_date'],
+  ['lSFrom','label.sample_from'],['lSTo','label.sample_to'],['lFFrom','label.field_from'],['lFTo','label.field_to'],
+  ['lCAE','label.cae'],['lTM','label.team_manager'],['lTeam','label.team'],['lExDate','label.exit_date'],['lExPart','label.exit_participants'],
+  ['mFRef','label.finding_ref'],['mFPri','label.priority'],['mFTitle','label.title'],
+  ['mFDesc','label.description'],['mFARef','label.article_ref'],['mFRC','label.root_cause'],['mFRec','label.recommendation']
+  ].forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.textContent=t(key);});
+}
+
+function renderPage(){ applyPageLabels(); if(currentAudit) renderHeader(currentAudit); loadFindings(); }
 
 function switchTab(name){
-  document.querySelectorAll('.tab').forEach((t,i)=>{
-    const names=['findings','edit'];
-    t.classList.toggle('active', names[i]===name);
-  });
-  document.querySelectorAll('.tab-content').forEach(c=>{
-    c.classList.toggle('active', c.id==='tab-'+name);
-  });
+  document.querySelectorAll('.tab').forEach((tb,i)=>{tb.classList.toggle('active',['findings','edit'][i]===name);});
+  document.querySelectorAll('.tab-content').forEach(c=>{c.classList.toggle('active',c.id==='tab-'+name);});
 }
 
 async function init(){
   const me=await fetch('/api/auth/me').then(r=>r.json());
   if(!me.authenticated){window.location.href='/login';return;}
   currentMe=me;
-  const roleLabel={'auditor':'Auditor','operational':'Operational'}[me.role]||me.role;
-  const displayRole=me.is_admin?'Admin':roleLabel;
-  document.getElementById('navUser').textContent=`${me.name} (${displayRole}) — Log Out`;
+  setNavUser(me);
+  applyPageLabels();
   if(me.is_admin) document.getElementById('navAdmin').style.display='';
   document.getElementById('navActions').style.display='';
 
   const audit=await fetch(`/api/audits/${auditId}`).then(r=>r.json());
-  if(audit.detail){document.getElementById('auditHeader').innerHTML='<p style="color:var(--danger)">Audit non trovato</p>';return;}
+  if(audit.detail){document.getElementById('auditHeader').innerHTML=`<p style="color:var(--danger)">${t('misc.not_found')}</p>`;return;}
   currentAudit=audit;
   document.title=`ODITO — ${audit.report_ref}`;
   renderHeader(audit);
-
   const canEdit=me.role==='auditor'||me.is_admin;
-  if(canEdit){
-    document.getElementById('tabEdit').style.display='';
-    document.getElementById('btnAddFinding').style.display='';
-    fillEditForm(audit);
-  }
+  if(canEdit){document.getElementById('tabEdit').style.display='';document.getElementById('btnAddFinding').style.display='';fillEditForm(audit);}
   document.getElementById('tabBar').style.display='flex';
-
   await loadFindings();
 }
 
 function renderHeader(a){
   const rc=RESULT_CLS[a.overall_result]||'';
   const rb=a.overall_result?`<span class="badge ${rc}">${a.overall_result}</span>`:'';
+  const canEdit=currentMe&&(currentMe.role==='auditor'||currentMe.is_admin);
   document.getElementById('auditHeader').innerHTML=`
   <div class="audit-header">
     <div class="audit-header-top">
-      <div>
-        <div class="audit-ref-big">${a.report_ref}</div>
+      <div><div class="audit-ref-big">${a.report_ref}</div></div>
+      <div class="audit-title-big">${escHtml(a.title)}</div>
+      <div style="display:flex;gap:.5rem;align-items:center">${rb}
+        ${canEdit?`<button class="btn btn-ghost btn-sm" onclick="switchTab('edit')">${t('btn.edit')}</button>`:''}
       </div>
-      <div class="audit-title-big">${a.title}</div>
-      ${rb}
     </div>
     <div class="meta-grid">
-      <div class="meta-item"><div class="key">Entità Auditata</div><div class="val">${a.audited_entity||'—'}</div></div>
-      <div class="meta-item"><div class="key">Tipo Audit</div><div class="val">${a.audit_type||'—'}</div></div>
-      <div class="meta-item"><div class="key">Classe Audit</div><div class="val">${a.audit_class||'—'}</div></div>
-      <div class="meta-item"><div class="key">Data Emissione</div><div class="val">${fmtDate(a.issue_date)}</div></div>
-      <div class="meta-item"><div class="key">Risultato Precedente</div><div class="val">${a.previous_result||'—'} ${a.previous_result_date?'('+fmtDate(a.previous_result_date)+')':''}</div></div>
-      <div class="meta-item"><div class="key">Periodo Campione</div><div class="val">${fmtDate(a.sample_period_from)} – ${fmtDate(a.sample_period_to)}</div></div>
-      <div class="meta-item"><div class="key">Fieldwork</div><div class="val">${fmtDate(a.fieldwork_period_from)} – ${fmtDate(a.fieldwork_period_to)}</div></div>
-      <div class="meta-item"><div class="key">Exit Meeting</div><div class="val">${fmtDate(a.exit_meeting_date)}</div></div>
-      <div class="meta-item"><div class="key">CAE</div><div class="val">${a.chief_audit_executive||'—'}</div></div>
-      <div class="meta-item"><div class="key">Team Manager</div><div class="val">${a.audit_team_manager||'—'}</div></div>
-      <div class="meta-item"><div class="key">Audit Team</div><div class="val">${a.audit_team||'—'}</div></div>
+      <div class="meta-item"><div class="key">${t('label.audited_entity').replace(' *','')}</div><div class="val">${escHtml(a.audited_entity||'—')}</div></div>
+      <div class="meta-item"><div class="key">${t('label.audit_type').replace(' *','')}</div><div class="val">${escHtml(a.audit_type||'—')}</div></div>
+      <div class="meta-item"><div class="key">${t('label.audit_class').replace(' *','')}</div><div class="val">${escHtml(a.audit_class||'—')}</div></div>
+      <div class="meta-item"><div class="key">${t('label.issue_date').replace(' *','')}</div><div class="val">${fmtDate(a.issue_date)}</div></div>
+      <div class="meta-item"><div class="key">${t('label.previous_result').replace(' *','')}</div><div class="val">${escHtml(a.previous_result||'—')}</div></div>
+      <div class="meta-item"><div class="key">${t('label.cae').replace(' *','')}</div><div class="val">${escHtml(a.chief_audit_executive||'—')}</div></div>
+      <div class="meta-item"><div class="key">${t('label.team_manager').replace(' *','')}</div><div class="val">${escHtml(a.audit_team_manager||'—')}</div></div>
     </div>
     ${a.background?`<hr class="section-divider"><div class="background-block">${escHtml(a.background)}</div>`:''}
   </div>`;
 }
 
-function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-
 async function loadFindings(){
   const findings=await fetch(`/api/findings?audit_id=${auditId}`).then(r=>r.json());
+  document.getElementById('findingsCount').textContent=`${t('section.findings')} (${findings.length})`;
   const el=document.getElementById('findingList');
-  document.getElementById('findingsCount').textContent=`Non conformità (${findings.length})`;
-  if(!findings.length){
-    el.innerHTML='<div class="empty-state">Nessuna non conformità registrata</div>';
-    return;
-  }
+  if(!findings.length){el.innerHTML=`<div class="empty-state">${t('msg.no_findings')}</div>`;return;}
   el.innerHTML=findings.map(f=>{
-    const p=PRIORITY[f.priority]||{label:'—',cls:'p3'};
-    const st=f.status==='closed'?'closed':'open';
+    const pLbl=t(`priority.${f.priority}`)||'—', pCls=`p${f.priority}`;
+    const stCls=f.status==='closed'?'closed':'open';
+    const stLbl=t(`status.${f.status}`)||f.status;
     const openM=f.open_measures_count||0, totM=f.total_measures_count||0;
     return `<div class="finding-card" onclick="location.href='/finding/${f.id}'">
       <div class="finding-card-top">
         <span class="finding-num">${f.finding_ref||'—'}</span>
         <span class="finding-title">${escHtml(f.title)}</span>
-        <span class="badge ${p.cls}">${p.label}</span>
-        <span class="badge ${st}">${st==='closed'?'Chiusa':'Aperta'}</span>
+        <span class="badge ${pCls}">${pLbl}</span>
+        <span class="badge ${stCls}">${stLbl}</span>
       </div>
       <div class="finding-meta">
         ${f.article_ref?`<span>📌 ${escHtml(f.article_ref)}</span>`:''}
-        <span>Misure: ${totM-openM}/${totM} completate</span>
+        <span>${totM-openM}/${totM} ${t('msg.measures_done')}</span>
       </div>
       ${f.description?`<div class="finding-desc">${escHtml(f.description)}</div>`:''}
     </div>`;
@@ -298,69 +300,46 @@ async function loadFindings(){
 
 function fillEditForm(a){
   const fv=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val||'';};
-  fv('e_report_ref',a.report_ref); fv('e_title',a.title);
-  fv('e_audited_entity',a.audited_entity); fv('e_audit_type',a.audit_type);
-  fv('e_audit_class',a.audit_class); fv('e_overall_result',a.overall_result);
-  fv('e_previous_result',a.previous_result); fv('e_previous_result_date',a.previous_result_date);
-  fv('e_issue_date',a.issue_date); fv('e_sample_from',a.sample_period_from);
-  fv('e_sample_to',a.sample_period_to); fv('e_field_from',a.fieldwork_period_from);
-  fv('e_field_to',a.fieldwork_period_to); fv('e_cae',a.chief_audit_executive);
-  fv('e_team_manager',a.audit_team_manager); fv('e_team',a.audit_team);
-  fv('e_exit_date',a.exit_meeting_date); fv('e_exit_participants',a.exit_meeting_participants);
-  fv('e_background',a.background);
+  fv('e_report_ref',a.report_ref);fv('e_title',a.title);fv('e_audited_entity',a.audited_entity);
+  fv('e_audit_type',a.audit_type);fv('e_audit_class',a.audit_class);fv('e_overall_result',a.overall_result);
+  fv('e_previous_result',a.previous_result);fv('e_previous_result_date',a.previous_result_date);
+  fv('e_issue_date',a.issue_date);fv('e_sample_from',a.sample_period_from);fv('e_sample_to',a.sample_period_to);
+  fv('e_field_from',a.fieldwork_period_from);fv('e_field_to',a.fieldwork_period_to);
+  fv('e_cae',a.chief_audit_executive);fv('e_team_manager',a.audit_team_manager);fv('e_team',a.audit_team);
+  fv('e_exit_date',a.exit_meeting_date);fv('e_exit_participants',a.exit_meeting_participants);fv('e_background',a.background);
 }
 
 async function saveEdit(){
   const v=(id)=>document.getElementById(id).value.trim()||null;
-  const err=document.getElementById('editErr');
-  err.style.display='none';
-  if(!v('e_report_ref')||!v('e_title')){err.textContent='Codice e Titolo obbligatori';err.style.display='block';return;}
-  const body={
-    report_ref:v('e_report_ref'), title:v('e_title'),
-    audited_entity:v('e_audited_entity'), audit_type:v('e_audit_type'), audit_class:v('e_audit_class'),
-    overall_result:v('e_overall_result'), previous_result:v('e_previous_result'),
-    previous_result_date:v('e_previous_result_date'), issue_date:v('e_issue_date'),
-    sample_period_from:v('e_sample_from'), sample_period_to:v('e_sample_to'),
-    fieldwork_period_from:v('e_field_from'), fieldwork_period_to:v('e_field_to'),
-    exit_meeting_date:v('e_exit_date'), exit_meeting_participants:v('e_exit_participants'),
-    chief_audit_executive:v('e_cae'), audit_team_manager:v('e_team_manager'),
-    audit_team:v('e_team'), background:v('e_background')
-  };
+  const err=document.getElementById('editErr');err.style.display='none';
+  if(!v('e_report_ref')||!v('e_title')){err.textContent=t('err.ref_title');err.style.display='block';return;}
+  const body={report_ref:v('e_report_ref'),title:v('e_title'),audited_entity:v('e_audited_entity'),audit_type:v('e_audit_type'),audit_class:v('e_audit_class'),overall_result:v('e_overall_result'),previous_result:v('e_previous_result'),previous_result_date:v('e_previous_result_date'),issue_date:v('e_issue_date'),sample_period_from:v('e_sample_from'),sample_period_to:v('e_sample_to'),fieldwork_period_from:v('e_field_from'),fieldwork_period_to:v('e_field_to'),exit_meeting_date:v('e_exit_date'),exit_meeting_participants:v('e_exit_participants'),chief_audit_executive:v('e_cae'),audit_team_manager:v('e_team_manager'),audit_team:v('e_team'),background:v('e_background')};
   const r=await fetch(`/api/audits/${auditId}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
   if(r.ok){const a=await r.json();currentAudit=a;renderHeader(a);switchTab('findings');}
-  else{const d=await r.json();err.textContent=d.detail||'Errore salvataggio';err.style.display='block';}
+  else{const d=await r.json();err.textContent=d.detail||t('err.ref_title');err.style.display='block';}
 }
 
-// --- Finding modal ---
 function openFindingModal(f=null){
   editingFindingId=f?f.id:null;
-  document.getElementById('findingModalTitle').textContent=f?'Modifica Non Conformità':'Aggiungi Non Conformità';
+  document.getElementById('findingModalTitle').textContent=f?t('btn.edit').replace('✏ ',''):t('section.findings');
   const fv=(id,val)=>document.getElementById(id).value=val||'';
-  fv('f_ref',f?.finding_ref); fv('f_priority',f?.priority||''); fv('f_title',f?.title);
-  fv('f_description',f?.description); fv('f_article_ref',f?.article_ref);
-  fv('f_root_cause',f?.root_cause); fv('f_recommendation',f?.recommendation);
+  fv('f_ref',f?.finding_ref);fv('f_priority',f?.priority||'');fv('f_title',f?.title);
+  fv('f_description',f?.description);fv('f_article_ref',f?.article_ref);fv('f_root_cause',f?.root_cause);fv('f_recommendation',f?.recommendation);
   document.getElementById('findingErr').style.display='none';
   document.getElementById('findingOverlay').classList.add('open');
 }
-
 function closeFindingModal(){document.getElementById('findingOverlay').classList.remove('open');}
 
 async function saveFinding(){
   const v=(id)=>document.getElementById(id).value.trim()||null;
-  const err=document.getElementById('findingErr');
-  err.style.display='none';
-  if(!v('f_ref')||!v('f_priority')||!v('f_title')){err.textContent='Numero, priorità e titolo obbligatori';err.style.display='block';return;}
-  const body={
-    audit_id:parseInt(auditId),
-    finding_ref:v('f_ref'), priority:parseInt(v('f_priority')), title:v('f_title'),
-    description:v('f_description'), article_ref:v('f_article_ref'),
-    root_cause:v('f_root_cause'), recommendation:v('f_recommendation')
-  };
+  const err=document.getElementById('findingErr');err.style.display='none';
+  if(!v('f_ref')||!v('f_priority')||!v('f_title')){err.textContent=t('err.ref_priority_title');err.style.display='block';return;}
+  const body={audit_id:parseInt(auditId),finding_ref:v('f_ref'),priority:parseInt(v('f_priority')),title:v('f_title'),description:v('f_description'),article_ref:v('f_article_ref'),root_cause:v('f_root_cause'),recommendation:v('f_recommendation')};
   const url=editingFindingId?`/api/findings/${editingFindingId}`:'/api/findings';
   const method=editingFindingId?'PUT':'POST';
   const r=await fetch(url,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
   if(r.ok){closeFindingModal();await loadFindings();}
-  else{const d=await r.json();err.textContent=d.detail||'Errore salvataggio';err.style.display='block';}
+  else{const d=await r.json();err.textContent=d.detail||t('err.ref_priority_title');err.style.display='block';}
 }
 
 document.getElementById('findingOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeFindingModal();});

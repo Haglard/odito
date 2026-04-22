@@ -3,14 +3,15 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <script>(function(){var t=localStorage.getItem('odito-theme')||'light';document.documentElement.dataset.theme=t;})()</script>
+<script src="/static/i18n.js"></script>
 <title>ODITO — Login</title>
 <style>
-:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3349;--text:#e8eaf6;--text2:#8892b0;--accent:#5c7cfa;--accent2:#4263eb;--danger:#f03e3e;--success:#37b24d;--warn:#f59f00}
-[data-theme=light]{--bg:#f0f2f8;--surface:#fff;--surface2:#e8eaf6;--border:#c5cae9;--text:#1a1d27;--text2:#555f7e;--accent:#4263eb;--accent2:#3451d1}
+:root{--bg:#f0f2f8;--surface:#fff;--surface2:#e8eaf6;--border:#c5cae9;--text:#1a1d27;--text2:#555f7e;--accent:#4263eb;--accent2:#3451d1;--danger:#f03e3e;--success:#37b24d;--warn:#f59f00}
+[data-theme=dark]{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3349;--text:#e8eaf6;--text2:#8892b0;--accent:#5c7cfa;--accent2:#4263eb}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2.5rem;width:100%;max-width:420px}
-.logo{font-size:2rem;font-weight:800;letter-spacing:-.5px;color:var(--accent);text-align:center;margin-bottom:.25rem}
+.logo{font-size:2rem;font-weight:800;color:var(--accent);text-align:center;margin-bottom:.25rem}
 .logo span{color:var(--text2);font-weight:400;font-size:.9rem}
 h2{text-align:center;font-size:1.2rem;margin-bottom:1.75rem;color:var(--text2)}
 label{display:block;font-size:.8rem;color:var(--text2);margin-bottom:.4rem;margin-top:1rem}
@@ -21,31 +22,43 @@ input:focus{border-color:var(--accent)}
 .link{text-align:center;margin-top:1rem;font-size:.85rem;color:var(--text2)}
 .link a{color:var(--accent);text-decoration:none}
 .err{background:#f03e3e22;border:1px solid var(--danger);color:var(--danger);padding:.7rem 1rem;border-radius:8px;margin-top:1rem;font-size:.85rem;display:none}
+.top-bar{position:fixed;top:.75rem;right:1rem;display:flex;gap:.5rem;align-items:center}
+.theme-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:.3rem .55rem;border-radius:6px;cursor:pointer;font-size:.82rem}
 </style>
 </head>
 <body>
+<div class="top-bar">
+  <div class="lang-switcher">
+    <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" data-lang="it" onclick="setLang('it')">IT</button>
+    <button class="lang-btn" data-lang="el" onclick="setLang('el')">EL</button>
+  </div>
+  <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+</div>
 <div class="card">
   <div class="logo">ODITO<br><span>Audit Management System</span></div>
-  <h2>Accedi al tuo account</h2>
-  <label>Email</label>
-  <input type="email" id="email" placeholder="nome@azienda.com" autocomplete="email">
-  <label>Password</label>
+  <h2 data-i18n="login.title">Sign in to your account</h2>
+  <label data-i18n="label.email">Email</label>
+  <input type="email" id="email" autocomplete="email" data-i18n-ph="label.email">
+  <label data-i18n="label.password">Password</label>
   <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
   <div class="err" id="err"></div>
-  <button class="btn" onclick="doLogin()">Sign In</button>
-  <div class="link">Don't have an account? <a href="/register">Register</a></div>
+  <button class="btn" onclick="doLogin()" data-i18n="btn.sign_in">Sign In</button>
+  <div class="link"><span data-i18n="login.no_account">Don't have an account?</span> <a href="/register" data-i18n="login.register_link">Register</a></div>
 </div>
 <script>
+function toggleTheme(){const t=document.documentElement.dataset.theme==='light'?'dark':'light';document.documentElement.dataset.theme=t;localStorage.setItem('odito-theme',t);}
 async function doLogin(){
   const email=document.getElementById('email').value.trim();
   const password=document.getElementById('password').value;
   const err=document.getElementById('err');
   err.style.display='none';
-  if(!email||!password){err.textContent='Compila tutti i campi';err.style.display='block';return;}
+  if(!email||!password){err.textContent=t('err.all_fields');err.style.display='block';return;}
   const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
   if(r.ok){window.location.href='/';}
-  else{const d=await r.json();err.textContent=d.detail||'Errore login';err.style.display='block';}
+  else{const d=await r.json();err.textContent=d.detail||t('err.all_fields');err.style.display='block';}
 }
 document.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+applyTranslations();
 </script>
 </body></html>

@@ -3,15 +3,16 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <script>(function(){var t=localStorage.getItem('odito-theme')||'light';document.documentElement.dataset.theme=t;})()</script>
+<script src="/static/i18n.js"></script>
 <title>ODITO — Admin</title>
 <style>
-:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3349;--text:#e8eaf6;--text2:#8892b0;--accent:#5c7cfa;--accent2:#4263eb;--danger:#f03e3e;--success:#37b24d;--warn:#f59f00}
-[data-theme=light]{--bg:#f0f2f8;--surface:#fff;--surface2:#e8eaf6;--border:#c5cae9;--text:#1a1d27;--text2:#555f7e;--accent:#4263eb;--accent2:#3451d1}
+:root{--bg:#f0f2f8;--surface:#fff;--surface2:#e8eaf6;--border:#c5cae9;--text:#1a1d27;--text2:#555f7e;--accent:#4263eb;--accent2:#3451d1;--danger:#f03e3e;--success:#37b24d;--warn:#f59f00}
+[data-theme=dark]{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3349;--text:#e8eaf6;--text2:#8892b0;--accent:#5c7cfa;--accent2:#4263eb}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif}
 nav{background:var(--surface);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:100}
 .nav-logo{font-size:1.3rem;font-weight:800;color:var(--accent);text-decoration:none;margin-right:auto}
-.nav-link{color:var(--text2);text-decoration:none;font-size:.9rem;padding:.4rem .75rem;border-radius:6px}
+.nav-link{color:var(--text2);text-decoration:none;font-size:.9rem;padding:.4rem .75rem;border-radius:6px;transition:background .2s}
 .nav-link.active,.nav-link:hover{background:var(--surface2);color:var(--text)}
 .nav-btn{padding:.4rem .9rem;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:.85rem;cursor:pointer;text-decoration:none}
 .theme-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:.4rem .7rem;border-radius:6px;cursor:pointer;font-size:.85rem}
@@ -25,7 +26,6 @@ h1{font-size:1.5rem;margin-bottom:.25rem}
 .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent2)}
 .btn-ghost{background:var(--surface2);color:var(--text2)}.btn-ghost:hover{background:var(--border)}
 .btn-danger{background:#f03e3e15;color:var(--danger);border:1px solid #f03e3e44}.btn-danger:hover{background:#f03e3e25}
-/* USER TABLE */
 table{width:100%;border-collapse:collapse}
 th{text-align:left;font-size:.75rem;text-transform:uppercase;letter-spacing:.4px;color:var(--text2);padding:.5rem .75rem;border-bottom:1px solid var(--border)}
 td{padding:.75rem;border-bottom:1px solid var(--border);font-size:.88rem;vertical-align:middle}
@@ -36,8 +36,7 @@ tr:hover td{background:var(--surface2)}
 .role-badge.auditor{background:#37b24d22;color:var(--success)}
 .role-badge.operational{background:#f59f0022;color:var(--warn)}
 .actions-cell{display:flex;gap:.4rem;flex-wrap:wrap}
-/* MODAL */
-.overlay{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;z-index:200;display:none}
+.overlay{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:200}
 .overlay.open{display:flex}
 .modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem;width:100%;max-width:440px}
 .modal-title{font-size:1.05rem;font-weight:700;margin-bottom:1.25rem}
@@ -49,7 +48,6 @@ select option{background:var(--surface)}
 .modal-actions{display:flex;gap:.75rem;margin-top:1.25rem;justify-content:flex-end}
 .err{background:#f03e3e22;border:1px solid var(--danger);color:var(--danger);padding:.6rem .9rem;border-radius:7px;margin-top:.75rem;font-size:.83rem;display:none}
 .ok{background:#37b24d22;border:1px solid var(--success);color:var(--success);padding:.6rem .9rem;border-radius:7px;margin-top:.75rem;font-size:.83rem;display:none}
-/* STATS */
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:2rem}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem 1.3rem}
 .stat-card .val{font-size:1.9rem;font-weight:700;line-height:1}
@@ -59,73 +57,78 @@ select option{background:var(--surface)}
 <body>
 <nav>
   <a class="nav-logo" href="/">ODITO</a>
-  <a class="nav-link" href="/">Dashboard</a>
-  <a class="nav-link" href="/my-actions">Le mie azioni</a>
-  <a class="nav-link active" href="/admin">Admin</a>
+  <a class="nav-link" href="/" id="navDashboard">Dashboard</a>
+  <a class="nav-link" href="/my-actions" id="navActions">My Actions</a>
+  <a class="nav-link active" href="/admin" id="navAdmin">Admin</a>
+  <div class="lang-switcher">
+    <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" data-lang="it" onclick="setLang('it')">IT</button>
+    <button class="lang-btn" data-lang="el" onclick="setLang('el')">EL</button>
+  </div>
   <button class="theme-btn" onclick="toggleTheme()">🌓</button>
   <a class="nav-btn" href="#" id="navUser" onclick="logout()">Log Out</a>
 </nav>
 
 <main>
-  <h1>Pannello Amministrazione</h1>
-  <p class="subtitle">Gestione utenti e configurazione sistema</p>
+  <h1 id="pageTitle" data-i18n="page.admin">Administration Panel</h1>
+  <p class="subtitle" data-i18n="page.admin_sub">User management and system configuration</p>
 
-  <div class="stats" id="statsRow">
-    <div class="stat-card"><div class="val" id="sUsers">—</div><div class="lbl">Utenti totali</div></div>
-    <div class="stat-card"><div class="val" id="sAuditors">—</div><div class="lbl">Auditor</div></div>
-    <div class="stat-card"><div class="val" id="sOperational">—</div><div class="lbl">Operativi</div></div>
-    <div class="stat-card"><div class="val" id="sAdmins">—</div><div class="lbl">Admin</div></div>
+  <div class="stats">
+    <div class="stat-card"><div class="val" id="sUsers">—</div><div class="lbl" data-i18n="admin.stat.users">Total Users</div></div>
+    <div class="stat-card"><div class="val" id="sAuditors">—</div><div class="lbl" data-i18n="admin.stat.auditors">Auditors</div></div>
+    <div class="stat-card"><div class="val" id="sOperational">—</div><div class="lbl" data-i18n="admin.stat.operational">Operational</div></div>
+    <div class="stat-card"><div class="val" id="sAdmins">—</div><div class="lbl" data-i18n="admin.stat.admins">Admins</div></div>
   </div>
 
   <div class="section-card">
     <div class="section-title">
-      <span>Gestione Utenti</span>
-      <button class="btn btn-primary btn-sm" onclick="openCreateModal()">+ New User</button>
+      <span data-i18n="section.users">User Management</span>
+      <button class="btn btn-primary btn-sm" id="btnNewUser" onclick="openCreateModal()">+ New User</button>
     </div>
     <div id="userTableWrap">
-      <p style="color:var(--text2);font-size:.9rem">Caricamento...</p>
+      <p style="color:var(--text2);font-size:.9rem" data-i18n="msg.loading">Loading...</p>
     </div>
   </div>
 </main>
 
-<!-- MODAL: Crea utente -->
+<!-- MODAL: Create user -->
 <div class="overlay" id="createOverlay">
   <div class="modal">
-    <div class="modal-title">Crea nuovo utente</div>
-    <div class="field"><label>Nome completo *</label><input id="c_name" placeholder="Mario Rossi"></div>
-    <div class="field"><label>Email *</label><input id="c_email" type="email" placeholder="nome@azienda.com"></div>
-    <div class="field"><label>Password *</label><input id="c_password" type="password" placeholder="••••••••"></div>
-    <div class="field"><label>Ruolo</label>
+    <div class="modal-title" data-i18n="admin.modal.create">Create new user</div>
+    <div class="field"><label data-i18n="label.full_name">Full name *</label><input id="c_name" placeholder="Mario Rossi"></div>
+    <div class="field"><label data-i18n="label.email">Email</label><input id="c_email" type="email" placeholder="name@company.com"></div>
+    <div class="field"><label data-i18n="label.password">Password</label><input id="c_password" type="password" placeholder="••••••••"></div>
+    <div class="field"><label data-i18n="label.new_role">New role</label>
       <select id="c_role">
-        <option value="operational">Operativo</option>
-        <option value="auditor">Auditor</option>
-        <option value="admin">Admin</option>
+        <option value="operational" data-i18n="role.operational">Operational</option>
+        <option value="auditor" data-i18n="role.auditor">Auditor</option>
+        <option value="admin" data-i18n="role.admin">Admin</option>
       </select>
     </div>
     <div class="err" id="createErr"></div>
     <div class="modal-actions">
-      <button class="btn btn-ghost btn-sm" onclick="closeCreateModal()">Cancel</button>
-      <button class="btn btn-primary btn-sm" onclick="createUser()">Create</button>
+      <button class="btn btn-ghost btn-sm" id="btnCreateCancel" onclick="closeCreateModal()">Cancel</button>
+      <button class="btn btn-primary btn-sm" id="btnCreateSave" onclick="createUser()">Create</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL: Modifica ruolo -->
+<!-- MODAL: Change role -->
 <div class="overlay" id="roleOverlay">
   <div class="modal">
-    <div class="modal-title">Cambia ruolo</div>
+    <div class="modal-title" data-i18n="admin.modal.role">Change role</div>
     <div id="roleUserInfo" style="font-size:.9rem;margin-bottom:1rem;color:var(--text2)"></div>
-    <div class="field"><label>Nuovo ruolo</label>
+    <div class="field"><label data-i18n="label.new_role">New role</label>
       <select id="r_role">
-        <option value="operational">Operativo</option>
-        <option value="auditor">Auditor</option>
-        <option value="admin">Admin</option>
+        <option value="operational" data-i18n="role.operational">Operational</option>
+        <option value="auditor" data-i18n="role.auditor">Auditor</option>
+        <option value="admin" data-i18n="role.admin">Admin</option>
       </select>
     </div>
     <div class="err" id="roleErr"></div>
     <div class="modal-actions">
-      <button class="btn btn-ghost btn-sm" onclick="closeRoleModal()">Cancel</button>
-      <button class="btn btn-primary btn-sm" onclick="saveRole()">Save</button>
+      <button class="btn btn-ghost btn-sm" id="btnRoleCancel" onclick="closeRoleModal()">Cancel</button>
+      <button class="btn btn-primary btn-sm" id="btnRoleSave" onclick="saveRole()">Save</button>
     </div>
   </div>
 </div>
@@ -133,14 +136,14 @@ select option{background:var(--surface)}
 <!-- MODAL: Reset password -->
 <div class="overlay" id="pwdOverlay">
   <div class="modal">
-    <div class="modal-title">Reset password</div>
+    <div class="modal-title" data-i18n="admin.modal.pwd">Reset password</div>
     <div id="pwdUserInfo" style="font-size:.9rem;margin-bottom:1rem;color:var(--text2)"></div>
-    <div class="field"><label>Nuova password *</label><input id="p_password" type="password" placeholder="Nuova password"></div>
+    <div class="field"><label data-i18n="label.new_password">New password *</label><input id="p_password" type="password" placeholder="••••••••"></div>
     <div class="err" id="pwdErr"></div>
     <div class="ok" id="pwdOk"></div>
     <div class="modal-actions">
-      <button class="btn btn-ghost btn-sm" onclick="closePwdModal()">Close</button>
-      <button class="btn btn-primary btn-sm" onclick="savePwd()">Save</button>
+      <button class="btn btn-ghost btn-sm" id="btnPwdClose" onclick="closePwdModal()">Close</button>
+      <button class="btn btn-primary btn-sm" id="btnPwdSave" onclick="savePwd()">Save</button>
     </div>
   </div>
 </div>
@@ -148,18 +151,35 @@ select option{background:var(--surface)}
 <script>
 let allUsers=[], editingUserId=null;
 
-function toggleTheme(){const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;localStorage.setItem('odito-theme',t);}
+function toggleTheme(){const th=document.documentElement.dataset.theme==='light'?'dark':'light';document.documentElement.dataset.theme=th;localStorage.setItem('odito-theme',th);}
 async function logout(){await fetch('/api/auth/logout',{method:'POST'});window.location.href='/login';}
 function escHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function fmtTs(s){if(!s)return'—';return new Date(s).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});}
+function fmtTs(s){if(!s)return'—';return new Date(s).toLocaleDateString(undefined,{day:'2-digit',month:'short',year:'numeric'});}
+
+function applyPageLabels(){
+  document.getElementById('btnNewUser').textContent=t('btn.new_user');
+  document.getElementById('btnCreateCancel').textContent=t('btn.cancel');
+  document.getElementById('btnCreateSave').textContent=t('btn.create');
+  document.getElementById('btnRoleCancel').textContent=t('btn.cancel');
+  document.getElementById('btnRoleSave').textContent=t('btn.save');
+  document.getElementById('btnPwdClose').textContent=t('btn.close');
+  document.getElementById('btnPwdSave').textContent=t('btn.save');
+}
+
+function renderPage(){
+  applyNavLinks();
+  applyPageLabels();
+  applyTranslations();
+  if(allUsers.length) renderTable(allUsers);
+}
 
 async function init(){
   const me=await fetch('/api/auth/me').then(r=>r.json());
   if(!me.authenticated){window.location.href='/login';return;}
   if(!me.is_admin){window.location.href='/';return;}
-  const roleLabel={'auditor':'Auditor','operational':'Operational'}[me.role]||me.role;
-  const displayRole=me.is_admin?'Admin':roleLabel;
-  document.getElementById('navUser').textContent=`${me.name} (${displayRole}) — Log Out`;
+  setNavUser(me);
+  applyNavLinks();
+  applyPageLabels();
   await loadUsers();
 }
 
@@ -178,23 +198,28 @@ function renderStats(users){
 
 function renderTable(users){
   const wrap=document.getElementById('userTableWrap');
-  if(!users.length){wrap.innerHTML='<p style="color:var(--text2);font-size:.9rem">Nessun utente</p>';return;}
+  if(!users.length){wrap.innerHTML=`<p style="color:var(--text2);font-size:.9rem">${t('msg.no_actions')}</p>`;return;}
   wrap.innerHTML=`<table>
     <thead><tr>
-      <th>Nome</th><th>Email</th><th>Ruolo</th><th>Registrato</th><th>Azioni</th>
+      <th>${t('admin.col.name')}</th>
+      <th>${t('admin.col.email')}</th>
+      <th>${t('admin.col.role')}</th>
+      <th>${t('admin.col.registered')}</th>
+      <th>${t('admin.col.actions')}</th>
     </tr></thead>
     <tbody>${users.map(u=>{
       const roleCls=u.is_admin?'admin':u.role;
-      const roleLabel=u.is_admin?'Admin':(u.role==='auditor'?'Auditor':'Operativo');
+      const roleKey=u.is_admin?'role.admin':`role.${u.role}`;
+      const roleLabel=t(roleKey);
       return `<tr>
         <td>${escHtml(u.name)}</td>
         <td>${escHtml(u.email)}</td>
         <td><span class="role-badge ${roleCls}">${roleLabel}</span></td>
         <td>${fmtTs(u.created_at)}</td>
         <td><div class="actions-cell">
-          <button class="btn btn-ghost btn-sm" onclick="openRoleModal(${u.id})">Role</button>
-          <button class="btn btn-ghost btn-sm" onclick="openPwdModal(${u.id})">Password</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id},'${escHtml(u.name)}')">Delete</button>
+          <button class="btn btn-ghost btn-sm" onclick="openRoleModal(${u.id})">${t('btn.role')}</button>
+          <button class="btn btn-ghost btn-sm" onclick="openPwdModal(${u.id})">${t('label.password')}</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id},'${escHtml(u.name)}')">${t('btn.delete')}</button>
         </div></td>
       </tr>`;
     }).join('')}</tbody>
@@ -214,11 +239,10 @@ async function createUser(){
   const v=(id)=>document.getElementById(id).value.trim()||null;
   const err=document.getElementById('createErr');
   err.style.display='none';
-  if(!v('c_name')||!v('c_email')||!v('c_password')){err.textContent='Tutti i campi obbligatori';err.style.display='block';return;}
+  if(!v('c_name')||!v('c_email')||!v('c_password')){err.textContent=t('err.all_fields');err.style.display='block';return;}
   const body={name:v('c_name'),email:v('c_email'),password:v('c_password')};
   const r=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-  if(!r.ok){const d=await r.json();err.textContent=d.detail||'Errore';err.style.display='block';return;}
-  // set role if not operational
+  if(!r.ok){const d=await r.json();err.textContent=d.detail||t('err.all_fields');err.style.display='block';return;}
   const role=document.getElementById('c_role').value;
   if(role!=='operational'){
     const usersNow=await fetch('/api/admin/users').then(r=>r.json());
@@ -235,7 +259,7 @@ async function createUser(){
 function openRoleModal(userId){
   editingUserId=userId;
   const u=allUsers.find(x=>x.id===userId);
-  document.getElementById('roleUserInfo').textContent=`Utente: ${u.name} (${u.email})`;
+  document.getElementById('roleUserInfo').textContent=`${u.name} (${u.email})`;
   document.getElementById('r_role').value=u.is_admin?'admin':u.role;
   document.getElementById('roleErr').style.display='none';
   document.getElementById('roleOverlay').classList.add('open');
@@ -246,17 +270,17 @@ async function saveRole(){
   const role=document.getElementById('r_role').value;
   const err=document.getElementById('roleErr');
   err.style.display='none';
-  const body={role: role==='admin'?'auditor':role, is_admin:role==='admin'};
+  const body={role:role==='admin'?'auditor':role, is_admin:role==='admin'};
   const r=await fetch(`/api/admin/users/${editingUserId}/role`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
   if(r.ok){closeRoleModal();await loadUsers();}
-  else{const d=await r.json();err.textContent=d.detail||'Errore';err.style.display='block';}
+  else{const d=await r.json();err.textContent=d.detail||t('err.all_fields');err.style.display='block';}
 }
 
 // --- Password ---
 function openPwdModal(userId){
   editingUserId=userId;
   const u=allUsers.find(x=>x.id===userId);
-  document.getElementById('pwdUserInfo').textContent=`Utente: ${u.name} (${u.email})`;
+  document.getElementById('pwdUserInfo').textContent=`${u.name} (${u.email})`;
   document.getElementById('p_password').value='';
   document.getElementById('pwdErr').style.display='none';
   document.getElementById('pwdOk').style.display='none';
@@ -268,23 +292,25 @@ async function savePwd(){
   const pwd=document.getElementById('p_password').value.trim();
   const err=document.getElementById('pwdErr'), ok=document.getElementById('pwdOk');
   err.style.display='none'; ok.style.display='none';
-  if(!pwd){err.textContent='Inserisci una password';err.style.display='block';return;}
+  if(!pwd){err.textContent=t('err.all_fields');err.style.display='block';return;}
   const r=await fetch(`/api/admin/users/${editingUserId}/password`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pwd})});
-  if(r.ok){ok.textContent='Password aggiornata';ok.style.display='block';}
-  else{const d=await r.json();err.textContent=d.detail||'Errore';err.style.display='block';}
+  if(r.ok){ok.textContent='✓ '+t('label.new_password').replace(' *','');ok.style.display='block';}
+  else{const d=await r.json();err.textContent=d.detail||t('err.all_fields');err.style.display='block';}
 }
 
 // --- Delete ---
 async function deleteUser(userId, name){
-  if(!confirm(`Eliminare l'utente "${name}"? L'operazione non può essere annullata.`)) return;
+  if(!confirm(t('admin.confirm_delete', name))) return;
   const r=await fetch(`/api/admin/users/${userId}`,{method:'DELETE'});
   if(r.ok) await loadUsers();
-  else alert('Errore durante l\'eliminazione');
+  else alert(t('err.all_fields'));
 }
 
 document.getElementById('createOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeCreateModal();});
 document.getElementById('roleOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeRoleModal();});
 document.getElementById('pwdOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closePwdModal();});
+
+applyTranslations();
 init();
 </script>
 </body></html>
