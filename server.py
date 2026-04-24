@@ -184,6 +184,9 @@ async def admin_page(): return page("admin.html")
 @app.get("/profile", response_class=HTMLResponse)
 async def profile_page(): return page("login.html")
 
+@app.get("/remediation-report", response_class=HTMLResponse)
+async def remediation_report_page(): return page("remediation-report.html")
+
 # ════════════════════════════════════════════════════════════
 # AUTH API
 # ════════════════════════════════════════════════════════════
@@ -958,6 +961,123 @@ async def import_full(req: ImportFullReq, user=Depends(require_auditor)):
                   f.description, f.article_ref, f.root_cause, f.recommendation))
         await db.commit()
     return JSONResponse({"id": audit_id, "findings_created": len(req.findings)})
+
+
+# ── Remediation Cluster Report ───────────────────────────────
+
+SEMANTIC_CLUSTER_PROMPT = """Sei un esperto di audit e compliance regolatorio.
+Ti viene fornita una lista di misure correttive estratte da report di audit interni.
+Il tuo compito è raggrupparle in cluster tematici sulla base della somiglianza semantica delle descrizioni.
+
+Regole:
+- Crea da 3 a 8 cluster tematici significativi e bilanciati
+- Ogni misura deve appartenere a esattamente un cluster
+- Il nome del cluster deve essere conciso (max 6 parole) e immediatamente comprensibile
+- Aggiungi una breve descrizione del tema comune del cluster (max 25 parole)
+- Restituisci SOLO JSON valido, senza testo aggiuntivo
+
+Formato risposta JSON:
+{
+  "clusters": [
+    {
+      "name": "Nome Cluster",
+      "theme": "Breve descrizione del tema comune tra le misure raggruppate",
+      "measure_ids": [1, 5, 12]
+    }
+  ]
+}
+"""
+
+@app.get("/api/reports/remediation")
+async def remediation_report_data(user=Depends(require_auditor)):
+    async with aiosqlite.connect(DB_PATH) as db:
+        db.row_factory = aiosqlite.Row
+        async with db.execute("""
+            SELECT
+                cm.id,
+                cm.description,
+                cm.status,
+                cm.deadline,
+                cm.completion_date,
+                cm.notes,
+                COALESCE(u.name, cm.action_owner_name, 'N/A') AS owner_display,
+                cm.action_owner_user_id,
+                f.id          AS finding_id,
+                f.finding_ref,
+                f.title       AS finding_title,
+                f.priority,
+                a.id          AS audit_id,
+                a.report_ref,
+                a.title       AS audit_title
+            FROM corrective_measures cm
+            JOIN findings      f ON cm.finding_id = f.id
+            JOIN audit_reports a ON f.audit_id    = a.id
+            LEFT JOIN users    u ON cm.action_owner_user_id = u.id
+            ORDER BY cm.deadline ASC, cm.id ASC
+        """) as cur:
+            rows = await cur.fetchall()
+    measures = [dict(r) for r in rows]
+    return JSONResponse({"measures": measures})
+
+
+class SemanticClusterReq(BaseModel):
+    openai_key: Optional[str] = None
+
+@app.post("/api/reports/remediation/semantic")
+async def remediation_semantic(req: SemanticClusterReq, user=Depends(require_auditor)):
+    api_key = req.openai_key or OPENAI_API_KEY
+    if not api_key:
+        raise HTTPException(400, "OpenAI API key non configurata. Impostare OPENAI_API_KEY o fornirla nel campo.")
+
+    async with aiosqlite.connect(DB_PATH) as db:
+        db.row_factory = aiosqlite.Row
+        async with db.execute("""
+            SELECT
+                cm.id,
+                cm.description,
+                f.finding_ref,
+                f.title AS finding_title,
+                f.priority,
+                a.report_ref
+            FROM corrective_measures cm
+            JOIN findings      f ON cm.finding_id = f.id
+            JOIN audit_reports a ON f.audit_id    = a.id
+            ORDER BY cm.id ASC
+        """) as cur:
+            rows = await cur.fetchall()
+    measures = [dict(r) for r in rows]
+
+    if not measures:
+        raise HTTPException(400, "Nessuna misura correttiva presente nel sistema.")
+
+    measures_text = "\n".join([
+        f"ID {m['id']}: [{m['report_ref']} / {m['finding_ref'] or 'N/A'}] "
+        f"(Priority {m['priority']}) {m['description']}"
+        for m in measures
+    ])
+
+    try:
+        from openai import AsyncOpenAI
+        client = AsyncOpenAI(api_key=api_key)
+        response = await client.chat.completions.create(
+            model=OPENAI_MODEL,
+            messages=[
+                {"role": "system", "content": SEMANTIC_CLUSTER_PROMPT},
+                {"role": "user",   "content": f"Misure correttive da raggruppare semanticamente:\n\n{measures_text}"}
+            ],
+            response_format={"type": "json_object"},
+            temperature=0.2,
+            max_tokens=2048
+        )
+    except Exception as e:
+        raise HTTPException(500, f"Errore OpenAI: {e}")
+
+    try:
+        result = jsonlib.loads(response.choices[0].message.content)
+    except Exception:
+        raise HTTPException(500, "La risposta AI non è JSON valido")
+
+    return JSONResponse(result)
 
 
 # ── Run ──────────────────────────────────────────────────────

@@ -62,6 +62,7 @@ h1{font-size:1.6rem;margin-bottom:.25rem}
   <a class="nav-link active" href="/" id="navDashboard">Dashboard</a>
   <a class="nav-link" href="/my-actions" id="navActions" style="display:none">My Actions</a>
   <a class="nav-link" id="navNewAudit" href="/audit/new" style="display:none">+ New Audit</a>
+  <a class="nav-link" id="navRemReport" href="/remediation-report" style="display:none">📊 Remediation Report</a>
   <a class="nav-link" href="/admin" id="navAdmin" style="display:none">Admin</a>
   <div class="lang-switcher">
     <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
@@ -143,6 +144,7 @@ async function init(){
   document.getElementById('greet').textContent=`${t('greeting')}, ${me.name}`;
   if(me.role==='auditor'||me.is_admin){
     document.getElementById('navNewAudit').style.display='';
+    document.getElementById('navRemReport').style.display='';
     document.getElementById('linkNew').style.display='';
   }
   if(me.is_admin) document.getElementById('navAdmin').style.display='';

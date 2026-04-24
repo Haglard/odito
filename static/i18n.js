@@ -6,6 +6,7 @@ const TRANSLATIONS = {
     // Nav
     'nav.dashboard': 'Dashboard', 'nav.my_actions': 'My Actions',
     'nav.new_audit': '+ New Audit', 'nav.admin': 'Admin', 'nav.logout': 'Log Out',
+    'nav.rem_report': '📊 Remediation Report',
     // Buttons
     'btn.save': 'Save', 'btn.save_changes': 'Save Changes', 'btn.cancel': 'Cancel',
     'btn.create': 'Create', 'btn.create_report': 'Create Report', 'btn.edit': '✏ Edit',
@@ -117,6 +118,7 @@ const TRANSLATIONS = {
   it: {
     'nav.dashboard': 'Dashboard', 'nav.my_actions': 'Le mie azioni',
     'nav.new_audit': '+ Nuovo Audit', 'nav.admin': 'Admin', 'nav.logout': 'Esci',
+    'nav.rem_report': '📊 Report Remediation',
     'btn.save': 'Salva', 'btn.save_changes': 'Salva modifiche', 'btn.cancel': 'Annulla',
     'btn.create': 'Crea', 'btn.create_report': 'Crea Report', 'btn.edit': '✏ Modifica',
     'btn.delete': 'Elimina', 'btn.send': 'Invia', 'btn.add': '+ Aggiungi', 'btn.close': 'Chiudi',
@@ -205,6 +207,7 @@ const TRANSLATIONS = {
   el: {
     'nav.dashboard': 'Πίνακας', 'nav.my_actions': 'Οι ενέργειές μου',
     'nav.new_audit': '+ Νέος Έλεγχος', 'nav.admin': 'Διαχείριση', 'nav.logout': 'Αποσύνδεση',
+    'nav.rem_report': '📊 Αναφορά Αποκατάστασης',
     'btn.save': 'Αποθήκευση', 'btn.save_changes': 'Αποθήκευση αλλαγών', 'btn.cancel': 'Ακύρωση',
     'btn.create': 'Δημιουργία', 'btn.create_report': 'Δημιουργία Αναφοράς', 'btn.edit': '✏ Επεξεργασία',
     'btn.delete': 'Διαγραφή', 'btn.send': 'Αποστολή', 'btn.add': '+ Προσθήκη', 'btn.close': 'Κλείσιμο',
@@ -357,6 +360,7 @@ function applyNavLinks() {
     navDashboard: 'nav.dashboard',
     navActions:   'nav.my_actions',
     navNewAudit:  'nav.new_audit',
+    navRemReport: 'nav.rem_report',
     navAdmin:     'nav.admin',
   };
   Object.entries(map).forEach(([id, key]) => {
