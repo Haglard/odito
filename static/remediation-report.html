@@ -66,17 +66,16 @@ nav{display:flex;align-items:center;gap:8px;padding:0 24px;height:56px;
 .cluster-title{font-weight:700;font-size:1rem;color:var(--text)}
 .cluster-theme{font-size:.82rem;color:var(--text2);margin-top:2px}
 .cluster-badge{background:var(--accent);color:#fff;border-radius:20px;
-               padding:3px 12px;font-size:.8rem;font-weight:600;white-space:nowrap}
+               padding:3px 12px;font-size:.8rem;font-weight:600;white-space:nowrap;flex-shrink:0;margin-left:10px}
 .cluster-overdue .cluster-header{border-left:4px solid var(--danger)}
 .cluster-body{padding:12px 16px;display:flex;flex-direction:column;gap:8px}
 
 /* ── Measure card ── */
 .measure-card{background:var(--surface2);border:1px solid var(--border);
-              border-radius:8px;padding:12px 16px;display:grid;
-              grid-template-columns:1fr auto;gap:8px;align-items:start}
+              border-radius:8px;padding:12px 16px}
 .measure-card:hover{border-color:var(--accent)}
 .measure-desc{font-size:.88rem;color:var(--text);line-height:1.45}
-.measure-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;align-items:center}
+.measure-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}
 .measure-meta a{font-size:.78rem;color:var(--accent);text-decoration:none}
 .measure-meta a:hover{text-decoration:underline}
 .meta-chip{font-size:.75rem;padding:2px 8px;border-radius:12px;
@@ -108,7 +107,8 @@ nav{display:flex;align-items:center;gap:8px;padding:0 24px;height:56px;
 /* ── Semantic panel ── */
 .semantic-controls{background:var(--surface);border:1px solid var(--border);
                    border-radius:var(--radius);padding:20px;margin-bottom:20px}
-.semantic-controls h3{font-size:1rem;margin-bottom:12px;color:var(--text)}
+.semantic-controls h3{font-size:1rem;margin-bottom:8px;color:var(--text)}
+.semantic-controls p{font-size:.85rem;color:var(--text2);margin-bottom:12px}
 .ai-form{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
 .ai-form input{flex:1;min-width:240px;padding:9px 12px;border:1px solid var(--border);
                border-radius:6px;background:var(--surface2);color:var(--text);font-size:.88rem}
@@ -118,7 +118,7 @@ nav{display:flex;align-items:center;gap:8px;padding:0 24px;height:56px;
              transition:.2s;white-space:nowrap}
 .btn-primary:hover{background:var(--accent2)}
 .btn-primary:disabled{opacity:.5;cursor:not-allowed}
-.ai-note{font-size:.78rem;color:var(--text2);margin-top:6px}
+.ai-note{font-size:.78rem;color:var(--text2);margin-top:8px}
 
 /* ── State messages ── */
 .loading{text-align:center;padding:48px;color:var(--text2)}
@@ -137,10 +137,10 @@ nav{display:flex;align-items:center;gap:8px;padding:0 24px;height:56px;
            border-radius:20px;padding:6px 16px;font-size:.82rem;
            display:flex;align-items:center;gap:6px}
 .stat-pill strong{color:var(--accent);font-size:1rem}
+.stat-pill strong.danger{color:var(--danger)}
 
 /* ── Responsive ── */
 @media(max-width:600px){
-  .measure-card{grid-template-columns:1fr}
   .tab-btn{padding:8px 12px;font-size:.82rem}
 }
 </style>
@@ -165,55 +165,33 @@ nav{display:flex;align-items:center;gap:8px;padding:0 24px;height:56px;
 
 <div class="page">
   <div class="page-header">
-    <h1>📊 Remediation Cluster Report</h1>
-    <p>Tutte le misure correttive raggruppate secondo criteri multipli</p>
+    <h1 id="pageTitle">📊 Remediation Cluster Report</h1>
+    <p id="pageSubtitle"></p>
   </div>
 
   <div id="statsBar" class="stats-bar"></div>
-
   <div id="errorBox" class="error-box" style="display:none"></div>
 
   <div id="loadingMain" class="loading">
     <div class="spinner"></div>
-    <div>Caricamento misure...</div>
+    <div id="loadingMsg"></div>
   </div>
 
   <div id="mainContent" style="display:none">
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('date',this)">📅 Per Data</button>
-      <button class="tab-btn" onclick="switchTab('owner',this)">👤 Per Responsabile</button>
-      <button class="tab-btn" onclick="switchTab('severity',this)">⚡ Per Severity</button>
-      <button class="tab-btn" onclick="switchTab('semantic',this)">🧠 Semantico (AI)</button>
-    </div>
+    <div class="tabs" id="tabsRow"></div>
 
-    <!-- TAB: Per Data -->
-    <div id="tab-date" class="tab-panel active">
-      <div id="dateContent"></div>
-    </div>
-
-    <!-- TAB: Per Responsabile -->
-    <div id="tab-owner" class="tab-panel">
-      <div id="ownerContent"></div>
-    </div>
-
-    <!-- TAB: Per Severity -->
-    <div id="tab-severity" class="tab-panel">
-      <div id="severityContent"></div>
-    </div>
-
-    <!-- TAB: Semantico (AI) -->
+    <div id="tab-date"     class="tab-panel active"></div>
+    <div id="tab-owner"    class="tab-panel"></div>
+    <div id="tab-severity" class="tab-panel"></div>
     <div id="tab-semantic" class="tab-panel">
       <div class="semantic-controls">
-        <h3>🧠 Clustering Semantico via ChatGPT</h3>
-        <p style="font-size:.85rem;color:var(--text2);margin-bottom:12px">
-          GPT-4o analizzerà le descrizioni di tutte le misure correttive e le raggrupperà
-          in cluster tematici per somiglianza semantica.
-        </p>
+        <h3 id="semTitle"></h3>
+        <p  id="semDesc"></p>
         <div class="ai-form">
-          <input type="password" id="openaiKeyInput" placeholder="OpenAI API key (lascia vuoto se configurata nel server)" autocomplete="off"/>
-          <button class="btn-primary" id="btnGenerate" onclick="generateSemantic()">🚀 Genera Cluster</button>
+          <input type="password" id="openaiKeyInput" autocomplete="off"/>
+          <button class="btn-primary" id="btnGenerate" onclick="generateSemantic()"></button>
         </div>
-        <div class="ai-note">ℹ️ La chiave non viene salvata. Se <code>OPENAI_API_KEY</code> è già configurata nel server puoi lasciare il campo vuoto.</div>
+        <div class="ai-note" id="semNote"></div>
       </div>
       <div id="semanticContent"></div>
     </div>
@@ -221,94 +199,123 @@ nav{display:flex;align-items:center;gap:8px;padding:0 24px;height:56px;
 </div>
 
 <script>
-// ── State ────────────────────────────────────────────────────
+// ── State ─────────────────────────────────────────────────────
 let allMeasures = [];
-let semanticResult = null;
+let _activeTab  = 'date';
+let _semanticDone = false;
 
-// ── Auth ─────────────────────────────────────────────────────
+// ── Auth / Theme ──────────────────────────────────────────────
 async function logout(){
   await fetch('/api/auth/logout',{method:'POST'});
   window.location.href='/login';
 }
 function toggleTheme(){
   const h=document.documentElement;
-  const t=h.getAttribute('data-theme')==='dark'?'light':'dark';
-  h.setAttribute('data-theme',t);
-  localStorage.setItem('odito-theme',t);
+  const next=h.getAttribute('data-theme')==='dark'?'light':'dark';
+  h.setAttribute('data-theme',next);
+  localStorage.setItem('odito-theme',next);
 }
 (function(){
-  const t=localStorage.getItem('odito-theme')||'light';
-  document.documentElement.setAttribute('data-theme',t);
+  const th=localStorage.getItem('odito-theme')||'light';
+  document.documentElement.setAttribute('data-theme',th);
 })();
 
-// ── Tab switching ────────────────────────────────────────────
-function switchTab(name, btn){
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('tab-'+name).classList.add('active');
+// ── Tab switching ─────────────────────────────────────────────
+function switchTab(name){
+  _activeTab=name;
+  document.querySelectorAll('.tab-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.tab===name);
+  });
+  document.querySelectorAll('.tab-panel').forEach(p=>{
+    p.classList.toggle('active', p.id==='tab-'+name);
+  });
 }
 
-// ── Helpers ──────────────────────────────────────────────────
-const PRIORITY_LABELS = {1:'High',2:'Relevant',3:'Medium',4:'Low'};
-const PRIORITY_CLASSES = {1:'pri-1',2:'pri-2',3:'pri-3',4:'pri-4'};
+// ── Static labels (re-applied on lang change) ─────────────────
+function applyPageLabels(){
+  document.getElementById('pageTitle').textContent   = '📊 '+t('rem.title');
+  document.getElementById('pageSubtitle').textContent= t('rem.subtitle');
+  document.getElementById('loadingMsg').textContent  = t('rem.loading');
+  document.getElementById('semTitle').textContent    = t('rem.semantic_title');
+  document.getElementById('semDesc').textContent     = t('rem.semantic_desc');
+  document.getElementById('openaiKeyInput').placeholder = t('rem.semantic_key_ph');
+  document.getElementById('btnGenerate').textContent = t('rem.btn_generate');
+  document.getElementById('semNote').textContent     = t('rem.semantic_note');
+  // Rebuild tabs row
+  const tabs=[
+    {id:'date',     key:'rem.tab_date'},
+    {id:'owner',    key:'rem.tab_owner'},
+    {id:'severity', key:'rem.tab_severity'},
+    {id:'semantic', key:'rem.tab_semantic'},
+  ];
+  document.getElementById('tabsRow').innerHTML=tabs.map(tab=>`
+    <button class="tab-btn${_activeTab===tab.id?' active':''}"
+            data-tab="${tab.id}" onclick="switchTab('${tab.id}')">
+      ${t(tab.key)}
+    </button>`).join('');
+}
+
+// ── Helpers ───────────────────────────────────────────────────
+const PRI_CLASSES={1:'pri-1',2:'pri-2',3:'pri-3',4:'pri-4'};
 
 function priorityBadge(p){
-  return `<span class="priority-badge ${PRIORITY_CLASSES[p]||'pri-3'}">${PRIORITY_LABELS[p]||'–'}</span>`;
+  return `<span class="priority-badge ${PRI_CLASSES[p]||'pri-3'}">${t('priority.'+p)||'–'}</span>`;
 }
-
 function statusChip(s){
-  const labels={pending:'Pending',in_progress:'In Progress',completed:'Completed'};
-  return `<span class="meta-chip chip-status-${s}">${labels[s]||s}</span>`;
+  return `<span class="meta-chip chip-status-${s}">${t('status.'+s)||s}</span>`;
 }
-
 function deadlineChip(dl, status){
   if(!dl) return '';
   const today=new Date(); today.setHours(0,0,0,0);
   const d=new Date(dl);
   const diff=Math.round((d-today)/86400000);
   const overdue=diff<0&&status!=='completed';
-  const cls=overdue?'chip-deadline':'chip-deadline ok';
-  const label=overdue?`⚠ Scaduto ${Math.abs(diff)}gg`:`📅 ${dl}`;
-  return `<span class="meta-chip ${cls}">${label}</span>`;
+  if(overdue){
+    return `<span class="meta-chip chip-deadline">${t('rem.overdue_days', String(Math.abs(diff)))}</span>`;
+  }
+  return `<span class="meta-chip chip-deadline ok">${t('rem.deadline_ok', dl)}</span>`;
 }
-
 function ownerChip(owner){
   if(!owner||owner==='N/A') return '';
   return `<span class="meta-chip chip-owner">👤 ${owner}</span>`;
+}
+function countLabel(n){
+  return n===1 ? `1 ${t('rem.count_one')}` : `${n} ${t('rem.count_many')}`;
 }
 
 function measureCard(m){
   const desc=m.description||'–';
   const auditLink=`<a href="/audit/${m.audit_id}">${m.report_ref}</a>`;
-  const findingLink=m.finding_id?`<a href="/finding/${m.finding_id}">${m.finding_ref||'NC'}: ${m.finding_title}</a>`:'';
+  const findingLink=m.finding_id
+    ?`<a href="/finding/${m.finding_id}">${m.finding_ref||'NC'}: ${m.finding_title}</a>`:'';
   return `
   <div class="measure-card">
-    <div>
-      <div class="measure-desc">${desc}</div>
-      <div class="measure-meta">
-        ${priorityBadge(m.priority)}
-        ${statusChip(m.status)}
-        ${ownerChip(m.owner_display)}
-        ${deadlineChip(m.deadline, m.status)}
-        <span style="font-size:.75rem;color:var(--text2)">${auditLink}${findingLink?' → '+findingLink:''}</span>
-      </div>
+    <div class="measure-desc">${desc}</div>
+    <div class="measure-meta">
+      ${priorityBadge(m.priority)}
+      ${statusChip(m.status)}
+      ${ownerChip(m.owner_display)}
+      ${deadlineChip(m.deadline, m.status)}
+      <span style="font-size:.75rem;color:var(--text2)">
+        ${auditLink}${findingLink?' → '+findingLink:''}
+      </span>
     </div>
   </div>`;
 }
 
 function clusterGroup(title, measures, opts={}){
-  const count=measures.length;
+  const n=measures.length;
   const overdueClass=opts.overdue?'cluster-overdue':'';
   const themeHtml=opts.theme?`<div class="cluster-theme">${opts.theme}</div>`:'';
   return `
   <div class="cluster-group ${overdueClass}">
-    <div class="cluster-header" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'flex':'none'">
+    <div class="cluster-header"
+         onclick="const b=this.nextElementSibling;b.style.display=b.style.display==='none'?'flex':'none'">
       <div>
         <div class="cluster-title">${title}</div>
         ${themeHtml}
       </div>
-      <span class="cluster-badge">${count} misur${count===1?'a':'e'}</span>
+      <span class="cluster-badge">${countLabel(n)}</span>
     </div>
     <div class="cluster-body" style="display:flex">
       ${measures.map(measureCard).join('')}
@@ -316,165 +323,140 @@ function clusterGroup(title, measures, opts={}){
   </div>`;
 }
 
-// ── Stats bar ────────────────────────────────────────────────
-function renderStats(measures){
-  const total=measures.length;
-  const completed=measures.filter(m=>m.status==='completed').length;
-  const overdue=measures.filter(m=>{
+// ── Stats bar ─────────────────────────────────────────────────
+function renderStats(){
+  const total=allMeasures.length;
+  const completed=allMeasures.filter(m=>m.status==='completed').length;
+  const today=new Date(); today.setHours(0,0,0,0);
+  const overdue=allMeasures.filter(m=>{
     if(m.status==='completed'||!m.deadline) return false;
-    return new Date(m.deadline)<new Date();
+    return new Date(m.deadline)<today;
   }).length;
-  const owners=new Set(measures.map(m=>m.owner_display).filter(o=>o&&o!=='N/A')).size;
+  const owners=new Set(allMeasures.map(m=>m.owner_display).filter(o=>o&&o!=='N/A')).size;
   document.getElementById('statsBar').innerHTML=`
-    <div class="stat-pill">Totale <strong>${total}</strong></div>
-    <div class="stat-pill">Completate <strong>${completed}</strong></div>
-    <div class="stat-pill">In Scadenza / Scadute <strong style="color:var(--danger)">${overdue}</strong></div>
-    <div class="stat-pill">Responsabili <strong>${owners}</strong></div>
-  `;
+    <div class="stat-pill">${t('rem.stat_total')} <strong>${total}</strong></div>
+    <div class="stat-pill">${t('rem.stat_completed')} <strong>${completed}</strong></div>
+    <div class="stat-pill">${t('rem.stat_overdue')} <strong class="danger">${overdue}</strong></div>
+    <div class="stat-pill">${t('rem.stat_owners')} <strong>${owners}</strong></div>`;
 }
 
 // ── Tab: Per Data ─────────────────────────────────────────────
-function renderByDate(measures){
+function renderByDate(){
   const today=new Date(); today.setHours(0,0,0,0);
   const buckets={};
-  const order=['overdue_60p','overdue_31_60','overdue_0_30','next_0_30','next_31_60','next_61_90','next_90p','no_dl'];
-  const labels={
-    overdue_60p:  '⚠️ Scaduto da oltre 60 giorni',
-    overdue_31_60:'⚠️ Scaduto 31–60 giorni fa',
-    overdue_0_30: '⚠️ Scaduto 0–30 giorni fa',
-    next_0_30:    '📅 Prossimi 30 giorni',
-    next_31_60:   '📅 Prossimi 31–60 giorni',
-    next_61_90:   '📅 Prossimi 61–90 giorni',
-    next_90p:     '📅 Oltre 90 giorni',
-    no_dl:        '❓ Senza scadenza',
+  const ORDER=['overdue_60p','overdue_31_60','overdue_0_30','next_0_30','next_31_60','next_61_90','next_90p','no_dl'];
+  const LABELS={
+    overdue_60p:  t('rem.date_overdue_60p'),
+    overdue_31_60:t('rem.date_overdue_31_60'),
+    overdue_0_30: t('rem.date_overdue_0_30'),
+    next_0_30:    t('rem.date_next_0_30'),
+    next_31_60:   t('rem.date_next_31_60'),
+    next_61_90:   t('rem.date_next_61_90'),
+    next_90p:     t('rem.date_next_90p'),
+    no_dl:        t('rem.date_no_dl'),
   };
-  const isOverdue={overdue_60p:true,overdue_31_60:true,overdue_0_30:true};
+  const IS_OVERDUE={overdue_60p:true,overdue_31_60:true,overdue_0_30:true};
 
-  for(const m of measures){
+  for(const m of allMeasures){
     let key;
-    if(!m.deadline){
-      key='no_dl';
-    } else {
-      const d=new Date(m.deadline);
-      const diff=Math.round((d-today)/86400000);
-      if(m.status==='completed'){
-        // completed: bucket per completion_date se disponibile, altrimenti deadline
-        const ref=m.completion_date?new Date(m.completion_date):d;
-        const cdiff=Math.round((ref-today)/86400000);
-        if(cdiff<-60) key='overdue_60p';
-        else if(cdiff<-30) key='overdue_31_60';
-        else if(cdiff<0)  key='overdue_0_30';
-        else if(cdiff<=30) key='next_0_30';
-        else if(cdiff<=60) key='next_31_60';
-        else if(cdiff<=90) key='next_61_90';
-        else key='next_90p';
-      } else {
-        if(diff<-60) key='overdue_60p';
-        else if(diff<-30) key='overdue_31_60';
-        else if(diff<0)  key='overdue_0_30';
-        else if(diff<=30) key='next_0_30';
-        else if(diff<=60) key='next_31_60';
-        else if(diff<=90) key='next_61_90';
-        else key='next_90p';
-      }
+    if(!m.deadline){key='no_dl';}
+    else {
+      const ref=(m.status==='completed'&&m.completion_date)?new Date(m.completion_date):new Date(m.deadline);
+      const diff=Math.round((ref-today)/86400000);
+      if(diff<-60) key='overdue_60p';
+      else if(diff<-30) key='overdue_31_60';
+      else if(diff<0)  key='overdue_0_30';
+      else if(diff<=30) key='next_0_30';
+      else if(diff<=60) key='next_31_60';
+      else if(diff<=90) key='next_61_90';
+      else key='next_90p';
     }
-    if(!buckets[key]) buckets[key]=[];
-    buckets[key].push(m);
+    (buckets[key]=buckets[key]||[]).push(m);
   }
 
-  const html=order.filter(k=>buckets[k]).map(k=>
-    clusterGroup(labels[k], buckets[k], {overdue:!!isOverdue[k]})
+  const html=ORDER.filter(k=>buckets[k]).map(k=>
+    clusterGroup(LABELS[k], buckets[k], {overdue:!!IS_OVERDUE[k]})
   ).join('');
-  document.getElementById('dateContent').innerHTML=html||'<div class="empty">Nessuna misura trovata.</div>';
+  document.getElementById('tab-date').innerHTML=html||`<div class="empty">${t('rem.empty')}</div>`;
 }
 
-// ── Tab: Per Responsabile ────────────────────────────────────
-function renderByOwner(measures){
+// ── Tab: Per Responsabile ─────────────────────────────────────
+function renderByOwner(){
   const groups={};
-  for(const m of measures){
+  for(const m of allMeasures){
     const key=m.owner_display||'N/A';
-    if(!groups[key]) groups[key]=[];
-    groups[key].push(m);
+    (groups[key]=groups[key]||[]).push(m);
   }
   const sorted=Object.entries(groups).sort((a,b)=>b[1].length-a[1].length);
-  const html=sorted.map(([owner,ms])=>
-    clusterGroup(`👤 ${owner}`, ms)
-  ).join('');
-  document.getElementById('ownerContent').innerHTML=html||'<div class="empty">Nessuna misura trovata.</div>';
+  const html=sorted.map(([owner,ms])=>clusterGroup(`👤 ${owner}`,ms)).join('');
+  document.getElementById('tab-owner').innerHTML=html||`<div class="empty">${t('rem.empty')}</div>`;
 }
 
-// ── Tab: Per Severity ────────────────────────────────────────
-function renderBySeverity(measures){
-  const groups={1:[],2:[],3:[],4:[]};
-  for(const m of measures){
-    const p=m.priority||3;
-    if(!groups[p]) groups[p]=[];
-    groups[p].push(m);
-  }
-  const sevLabels={1:'⚡ High (Priority 1)',2:'🔶 Relevant (Priority 2)',3:'🔷 Medium (Priority 3)',4:'🟢 Low (Priority 4)'};
+// ── Tab: Per Severity ─────────────────────────────────────────
+function renderBySeverity(){
+  const groups={};
+  for(const m of allMeasures){(groups[m.priority||3]=groups[m.priority||3]||[]).push(m);}
+  const SEVLABELS={1:t('rem.sev_1'),2:t('rem.sev_2'),3:t('rem.sev_3'),4:t('rem.sev_4')};
   const html=[1,2,3,4].filter(p=>groups[p]?.length).map(p=>
-    clusterGroup(sevLabels[p], groups[p])
+    clusterGroup(SEVLABELS[p], groups[p])
   ).join('');
-  document.getElementById('severityContent').innerHTML=html||'<div class="empty">Nessuna misura trovata.</div>';
+  document.getElementById('tab-severity').innerHTML=html||`<div class="empty">${t('rem.empty')}</div>`;
 }
 
-// ── Tab: Semantico ───────────────────────────────────────────
+// ── Tab: Semantico ────────────────────────────────────────────
 async function generateSemantic(){
   const btn=document.getElementById('btnGenerate');
   const key=document.getElementById('openaiKeyInput').value.trim()||null;
   const box=document.getElementById('semanticContent');
-
   btn.disabled=true;
-  box.innerHTML='<div class="loading"><div class="spinner"></div><div>GPT-4o sta analizzando le misure...</div></div>';
-
-  try {
+  box.innerHTML=`<div class="loading"><div class="spinner"></div><div>${t('rem.analyzing')}</div></div>`;
+  try{
     const res=await fetch('/api/reports/remediation/semantic',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
+      method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({openai_key:key})
     });
     const data=await res.json();
-    if(!res.ok) throw new Error(data.detail||'Errore sconosciuto');
-
-    semanticResult=data;
+    if(!res.ok) throw new Error(data.detail||'Error');
     renderSemantic(data);
+    _semanticDone=true;
   } catch(e){
     box.innerHTML=`<div class="error-box">❌ ${e.message}</div>`;
-  } finally {
-    btn.disabled=false;
-  }
+  } finally{btn.disabled=false;}
 }
 
 function renderSemantic(data){
-  const clusters=data.clusters||[];
+  const clusters=data?.clusters||[];
   if(!clusters.length){
-    document.getElementById('semanticContent').innerHTML='<div class="empty">Nessun cluster generato.</div>';
+    document.getElementById('semanticContent').innerHTML=`<div class="empty">${t('rem.no_clusters')}</div>`;
     return;
   }
-
-  // Build measure lookup
-  const measureById={};
-  for(const m of allMeasures) measureById[m.id]=m;
-
+  const byId={};
+  for(const m of allMeasures) byId[m.id]=m;
   const html=clusters.map(c=>{
-    const ms=(c.measure_ids||[]).map(id=>measureById[id]).filter(Boolean);
+    const ms=(c.measure_ids||[]).map(id=>byId[id]).filter(Boolean);
     return clusterGroup(`🏷 ${c.name}`, ms, {theme:c.theme});
   }).join('');
-
-  document.getElementById('semanticContent').innerHTML=html||'<div class="empty">Nessuna misura nei cluster.</div>';
+  document.getElementById('semanticContent').innerHTML=html||`<div class="empty">${t('rem.no_cluster_measures')}</div>`;
 }
 
-// ── Render all tabs ──────────────────────────────────────────
-function renderAll(){
-  renderByDate(allMeasures);
-  renderByOwner(allMeasures);
-  renderBySeverity(allMeasures);
-  renderStats(allMeasures);
+// ── renderPage — called by i18n setLang() ─────────────────────
+function renderPage(){
+  applyPageLabels();
+  applyNavLinks();
+  if(allMeasures.length===0) return;
+  renderStats();
+  renderByDate();
+  renderByOwner();
+  renderBySeverity();
+  // Semantic: only re-render labels in controls (don't re-call AI)
+  // cluster cards already re-rendered by renderSemantic if done, else nothing
 }
 
-// ── Init ─────────────────────────────────────────────────────
+// ── Init ──────────────────────────────────────────────────────
 async function init(){
+  applyPageLabels();
   applyTranslations();
+
   const me=await fetch('/api/auth/me').then(r=>r.json());
   if(!me.authenticated){window.location.href='/login';return;}
   if(me.role!=='auditor'&&!me.is_admin){window.location.href='/';return;}
@@ -490,14 +472,19 @@ async function init(){
     allMeasures=data.measures||[];
     document.getElementById('loadingMain').style.display='none';
     document.getElementById('mainContent').style.display='block';
-    renderAll();
+    renderStats();
+    renderByDate();
+    renderByOwner();
+    renderBySeverity();
   } catch(e){
     document.getElementById('loadingMain').style.display='none';
-    document.getElementById('errorBox').textContent='Errore caricamento dati: '+e.message;
-    document.getElementById('errorBox').style.display='block';
+    const eb=document.getElementById('errorBox');
+    eb.textContent=t('rem.err_load')+e.message;
+    eb.style.display='block';
   }
 }
 
+applyPageLabels();
 applyTranslations();
 init();
 </script>
